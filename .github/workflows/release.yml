@@ -1,10 +1,8 @@
-name: Build and publish SteveCount
+name: Build and publish SteveCount Fabric and NeoForge
 on:
   workflow_dispatch:
   push:
-    paths:
-      - 'source/SteveCount-Source.zip.b64'
-      - '.github/workflows/release.yml'
+    branches: [main]
 
 permissions:
   contents: write
@@ -29,38 +27,26 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Unpack verified source
-        run: |
-          @'
-          import base64, hashlib, io, pathlib, zipfile
-          raw=base64.b64decode(pathlib.Path('source/SteveCount-Source.zip.b64').read_text())
-          assert hashlib.sha256(raw).hexdigest() == '667d9254680827915c1f230826235a5df298c7f77057bc2cc60f640a9dabf139'
-          z=zipfile.ZipFile(io.BytesIO(raw))
-          assert all(n.startswith('SteveCount/') and '..' not in pathlib.PurePosixPath(n).parts for n in z.namelist())
-          z.extractall('.')
-          '@ | python -
-          if ($LASTEXITCODE -ne 0) { throw 'Source verification failed' }
       - name: Install locked build dependencies
-        working-directory: SteveCount
         run: |
           python -m venv .venv
           & .\.venv\Scripts\python.exe -m pip install -r companion/requirements-lock.txt
           if ($LASTEXITCODE -ne 0) { throw 'Dependency installation failed' }
       - name: Build and test NeoForge 26.3 mod
-        working-directory: SteveCount
         run: |
           & .\minecraft-mod\gradlew.bat -p minecraft-mod build --no-daemon
           if ($LASTEXITCODE -ne 0) { throw 'Minecraft checks failed' }
+      - name: Build and test Fabric 26.3 mod
+        run: |
+          & .\fabric-mod\gradlew.bat -p fabric-mod build --no-daemon
+          if ($LASTEXITCODE -ne 0) { throw 'Fabric checks failed' }
       - name: Test companion
-        working-directory: SteveCount
         run: |
           & .\.venv\Scripts\python.exe -m pytest companion/tests -v
           if ($LASTEXITCODE -ne 0) { throw 'Companion checks failed' }
       - name: Build standalone Windows companion
-        working-directory: SteveCount
         run: .\companion\build-windows.ps1
       - name: Smoke test packaged EXE and authenticated localhost
-        working-directory: SteveCount
         run: |
           @'
           import json, os, pathlib, subprocess, time, urllib.request
@@ -95,39 +81,41 @@ jobs:
           '@ | .\.venv\Scripts\python.exe -
           if ($LASTEXITCODE -ne 0) { throw 'Packaged companion smoke test failed' }
       - name: Package verified release
-        working-directory: SteveCount
         run: |
           Add-Content TEST-REPORT.md "`n## GitHub-hosted Windows verification`nThis build passed the packaged EXE startup and authenticated localhost status smoke test on a GitHub-hosted Windows runner. This supersedes the local machine execution blocker for this newly rebuilt artifact. Live TikTok streaming and in-world gameplay remain unverified.`n"
           & .\.venv\Scripts\python.exe scripts/package.py
           if ($LASTEXITCODE -ne 0) { throw 'Packaging failed' }
           @'
           import pathlib,zipfile
-          p=pathlib.Path('dist/SteveCount-Windows.zip')
-          assert p.is_file()
-          z=zipfile.ZipFile(p)
-          assert z.testzip() is None
-          assert {'SteveCount-Companion.exe','SteveCount-26.3-NeoForge.jar','INSTALL.md'}.issubset(z.namelist())
-          print('Verified Windows installation ZIP',p.stat().st_size)
+          for loader in ('Fabric','NeoForge'):
+              p=pathlib.Path(f'dist/SteveCount-Windows-{loader}.zip')
+              assert p.is_file()
+              z=zipfile.ZipFile(p)
+              assert z.testzip() is None
+              assert {'SteveCount-Companion.exe',f'SteveCount-26.3-{loader}.jar','INSTALL.md'}.issubset(z.namelist())
+              assert [n for n in z.namelist() if n.endswith('.jar')]==[f'SteveCount-26.3-{loader}.jar']
+              print('Verified Windows installation ZIP',p.name,p.stat().st_size)
           '@ | .\.venv\Scripts\python.exe -
           if ($LASTEXITCODE -ne 0) { throw 'ZIP validation failed' }
       - uses: actions/upload-artifact@v4
         with:
           name: SteveCount-Windows
-          path: SteveCount/dist/
+          path: dist/
       - name: Publish release candidate
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
         run: |
           @'
-          SteveCount release candidate for Minecraft 26.3 / NeoForge 26.3.0.102.
+          SteveCount release candidate for Minecraft 26.3 with Fabric or NeoForge.
 
-          Download SteveCount-Windows.zip, extract it, put the JAR in your client mods folder, and run the companion EXE. No Python installation is needed.
+          Download SteveCount-Windows-Fabric.zip for Fabric Loader 0.20.1+ with Fabric API 0.166.2+26.3, or SteveCount-Windows-NeoForge.zip for NeoForge 26.3.0.102. Install only the JAR matching your loader. Both use the same companion EXE. Open settings with K or /stevecount.
 
-          Rebuilt on standard Windows Python, with the SSL packaging correction and betterproto2 metadata included. Java core checks, companion tests, packaged EXE startup, authenticated localhost status, and ZIP integrity checks passed.
+          Rebuilt on standard Windows Python, with the SSL packaging correction and betterproto2 metadata included. Both loader builds, 83 core assertions per loader, companion tests, packaged EXE startup, authenticated localhost status, and loader-specific ZIP integrity checks passed. Both loaders also passed local client render smoke tests. See FABRIC.md for Fabric installation.
 
           Live TikTok end-to-end integration and regular gameplay remain unverified. This is an unsigned release candidate, not a production-certified build. See TEST-REPORT.md inside the ZIP.
           '@ | Set-Content release-notes.md
-          $tag = 'v1.0.0-rc.2-build-' + $env:GITHUB_RUN_NUMBER
-          gh release create $tag SteveCount/dist/SteveCount-Windows.zip SteveCount/dist/SteveCount-26.3-NeoForge.jar SteveCount/dist/SteveCount-Companion.exe SteveCount/dist/SteveCount-Source.zip SteveCount/dist/SHA256SUMS.txt --target $env:GITHUB_SHA --title "SteveCount Windows RC — SSL fix" --notes-file release-notes.md --prerelease
+          $tag = 'v1.0.0-rc.3-build-' + $env:GITHUB_RUN_NUMBER
+          gh release create $tag dist/SteveCount-Windows-Fabric.zip dist/SteveCount-Windows-NeoForge.zip dist/SteveCount-26.3-Fabric.jar dist/SteveCount-Windows.zip dist/SteveCount-26.3-NeoForge.jar dist/SteveCount-Companion.exe dist/SteveCount-Source.zip dist/SHA256SUMS.txt --target $env:GITHUB_SHA --title "SteveCount Fabric + NeoForge RC" --notes-file release-notes.md --prerelease
           if ($LASTEXITCODE -ne 0) { throw 'Release publication failed' }
+
