@@ -1,0 +1,133 @@
+name: Build and publish SteveCount
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'source/SteveCount-Source.zip.b64'
+      - '.github/workflows/release.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: stevecount-release
+  cancel-in-progress: false
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 35
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Unpack verified source
+        run: |
+          @'
+          import base64, hashlib, io, pathlib, zipfile
+          raw=base64.b64decode(pathlib.Path('source/SteveCount-Source.zip.b64').read_text())
+          assert hashlib.sha256(raw).hexdigest() == '667d9254680827915c1f230826235a5df298c7f77057bc2cc60f640a9dabf139'
+          z=zipfile.ZipFile(io.BytesIO(raw))
+          assert all(n.startswith('SteveCount/') and '..' not in pathlib.PurePosixPath(n).parts for n in z.namelist())
+          z.extractall('.')
+          '@ | python -
+          if ($LASTEXITCODE -ne 0) { throw 'Source verification failed' }
+      - name: Install locked build dependencies
+        working-directory: SteveCount
+        run: |
+          python -m venv .venv
+          & .\.venv\Scripts\python.exe -m pip install -r companion/requirements-lock.txt
+          if ($LASTEXITCODE -ne 0) { throw 'Dependency installation failed' }
+      - name: Build and test NeoForge 26.3 mod
+        working-directory: SteveCount
+        run: |
+          & .\minecraft-mod\gradlew.bat -p minecraft-mod build --no-daemon
+          if ($LASTEXITCODE -ne 0) { throw 'Minecraft checks failed' }
+      - name: Test companion
+        working-directory: SteveCount
+        run: |
+          & .\.venv\Scripts\python.exe -m pytest companion/tests -v
+          if ($LASTEXITCODE -ne 0) { throw 'Companion checks failed' }
+      - name: Build standalone Windows companion
+        working-directory: SteveCount
+        run: .\companion\build-windows.ps1
+      - name: Smoke test packaged EXE and authenticated localhost
+        working-directory: SteveCount
+        run: |
+          @'
+          import json, os, pathlib, subprocess, time, urllib.request
+          root=pathlib.Path(os.environ['RUNNER_TEMP'])/'stevecount-exe-smoke'
+          root.mkdir(exist_ok=True)
+          env=os.environ.copy()
+          env['LOCALAPPDATA']=str(root)
+          proc=subprocess.Popen([str(pathlib.Path('dist/SteveCount-Companion.exe').resolve())],env=env)
+          try:
+              deadline=time.monotonic()+45
+              while time.monotonic()<deadline:
+                  if proc.poll() is not None:
+                      raise RuntimeError('Packaged companion exited unexpectedly')
+                  try:
+                      token=json.loads((root/'SteveCount/connection.json').read_text())['token']
+                      req=urllib.request.Request('http://127.0.0.1:18763/status',headers={'Authorization':'Bearer '+token})
+                      with urllib.request.urlopen(req,timeout=2) as response:
+                          data=json.load(response)
+                      assert data['status']=='Not Configured' and data['viewers'] is None
+                      print('Packaged EXE startup and authenticated HTTP status passed')
+                      break
+                  except (OSError, ValueError, KeyError):
+                      time.sleep(1)
+              else:
+                  err=root/'SteveCount/startup-error.log'
+                  if err.exists(): print(err.read_text())
+                  raise RuntimeError('No authenticated status from packaged companion within 45 seconds')
+          finally:
+              proc.terminate()
+              try: proc.wait(timeout=10)
+              except subprocess.TimeoutExpired: proc.kill()
+          '@ | .\.venv\Scripts\python.exe -
+          if ($LASTEXITCODE -ne 0) { throw 'Packaged companion smoke test failed' }
+      - name: Package verified release
+        working-directory: SteveCount
+        run: |
+          Add-Content TEST-REPORT.md "`n## GitHub-hosted Windows verification`nThis build passed the packaged EXE startup and authenticated localhost status smoke test on a GitHub-hosted Windows runner. This supersedes the local machine execution blocker for this newly rebuilt artifact. Live TikTok streaming and in-world gameplay remain unverified.`n"
+          & .\.venv\Scripts\python.exe scripts/package.py
+          if ($LASTEXITCODE -ne 0) { throw 'Packaging failed' }
+          @'
+          import pathlib,zipfile
+          p=pathlib.Path('dist/SteveCount-Windows.zip')
+          assert p.is_file()
+          z=zipfile.ZipFile(p)
+          assert z.testzip() is None
+          assert {'SteveCount-Companion.exe','SteveCount-26.3-NeoForge.jar','INSTALL.md'}.issubset(z.namelist())
+          print('Verified Windows installation ZIP',p.stat().st_size)
+          '@ | .\.venv\Scripts\python.exe -
+          if ($LASTEXITCODE -ne 0) { throw 'ZIP validation failed' }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SteveCount-Windows
+          path: SteveCount/dist/
+      - name: Publish release candidate
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          @'
+          SteveCount release candidate for Minecraft 26.3 / NeoForge 26.3.0.102.
+
+          Download SteveCount-Windows.zip, extract it, put the JAR in your client mods folder, and run the companion EXE. No Python installation is needed.
+
+          Rebuilt on standard Windows Python, with the SSL packaging correction and betterproto2 metadata included. Java core checks, companion tests, packaged EXE startup, authenticated localhost status, and ZIP integrity checks passed.
+
+          Live TikTok end-to-end integration and regular gameplay remain unverified. This is an unsigned release candidate, not a production-certified build. See TEST-REPORT.md inside the ZIP.
+          '@ | Set-Content release-notes.md
+          $tag = 'v1.0.0-rc.2-build-' + $env:GITHUB_RUN_NUMBER
+          gh release create $tag SteveCount/dist/SteveCount-Windows.zip SteveCount/dist/SteveCount-26.3-NeoForge.jar SteveCount/dist/SteveCount-Companion.exe SteveCount/dist/SteveCount-Source.zip SteveCount/dist/SHA256SUMS.txt --target $env:GITHUB_SHA --title "SteveCount Windows RC — SSL fix" --notes-file release-notes.md --prerelease
+          if ($LASTEXITCODE -ne 0) { throw 'Release publication failed' }
