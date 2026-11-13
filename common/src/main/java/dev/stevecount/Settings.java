@@ -16,6 +16,9 @@ public class Settings {
     public int textColor = 0xFFFFFFFF, backgroundColor = 0x101820;
     public boolean animations = true, sound = false, toast = true, autoConnect = false;
     public String milestones = "10,25,50,100,250,500,1000";
+    public String displayMode = "HUD", characterSkin = "Steve";
+    public float characterScale = .55f, followDistance = 2.5f;
+    public boolean characterLabel = true, characterGrounded = true;
     static Path configDirectory = Path.of("config");
     private static Path path() { return configDirectory.resolve("stevecount.json"); }
     public void validate() {
@@ -27,6 +30,16 @@ public class Settings {
         if (!java.util.List.of("Steve","Alex","Player","None").contains(icon)) icon="Steve";
         if (username == null) username="";
         if (milestones == null) milestones="";
+        if (!java.util.List.of("HUD","Character","Both").contains(displayMode)) displayMode="HUD";
+        if (!java.util.List.of("Steve","Alex","Player").contains(characterSkin)) characterSkin="Steve";
+        characterScale=Float.isFinite(characterScale)?Math.clamp(characterScale,.25f,1f):.55f;
+        followDistance=Float.isFinite(followDistance)?Math.clamp(followDistance,1.5f,6f):2.5f;
+    }
+    boolean showHud() { return !"Character".equals(displayMode); }
+    boolean showCharacter() { return !"HUD".equals(displayMode); }
+    void resetHudAppearance() {
+        preset="Compact";icon="Steve";scale=1;opacity=.65f;x=y=0;offsetX=offsetY=8;
+        background=border=liveLabel=true;abbreviated=false;textColor=0xFFFFFFFF;backgroundColor=0x101820;
     }
     public static Settings load() {
         try { var s = JSON.fromJson(Files.readString(path()), Settings.class); if (s != null) { s.validate(); return s; } }

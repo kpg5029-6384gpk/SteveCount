@@ -4,6 +4,8 @@ Download the Windows bundles from the [GitHub Releases page](https://github.com/
 
 A client-side Minecraft HUD for TikTok LIVE concurrent viewers. SteveCount includes a Steve/Alex/player head, four presets, drag positioning, viewer milestones, and a demo that works without Internet or the companion.
 
+**New optional follower character:** open settings → **Character**, then choose **Character** or **Both**. A miniature Steve, Alex, or your player skin follows you in the world with the current count above it. It is render-only and visible only to your client/game capture. See [CHARACTER.md](CHARACTER.md).
+
 **Build targets:** Minecraft Java 26.3 with either NeoForge 26.3.0.102 or Fabric Loader 0.20.1 + Fabric API 0.166.2+26.3. Java 25, Windows 11 x64. This is an initial MVP build, not a published Modrinth project. Read TEST-REPORT.md for the precise verification status before using it on stream.
 
 ## Fabric support
@@ -29,7 +31,7 @@ Select Move HUD to drag the preview. Size, opacity, preset and reset controls up
 
 ## Test without streaming
 
-Open Testing and enable Demo. Set a whole-number count, use +10 / -10, turn on automatic simulation, or simulate Offline / Reconnecting. Move HUD previews 128 when no real count exists. Demo data is labeled DEMO, never written as stream statistics, and resets when Minecraft restarts. Turning demo on disconnects the companion's stream. Click Connect to return to real data.
+Open Demo and enable Demo. Set a whole-number count, use +10 / -10, turn on automatic simulation, or simulate Offline / Reconnecting. Move HUD previews 128 when no real count exists. Demo data is labeled DEMO, never written as stream statistics, and resets when Minecraft restarts. Turning demo on disconnects the companion's stream. Click Connect to return to real data.
 
 ## States and count accuracy
 
@@ -57,3 +59,4 @@ TikTokLive 7.0.1 is unofficial. Its required connection signing uses **api.euler
 The companion must be started explicitly. Automatic launch was considered but omitted to avoid brittle installation paths or executing an unexpected file. Minecraft auto-connect is optional and only contacts the installed localhost companion; nothing is downloaded or executed by the mod.
 
 See INSTALL.md, TROUBLESHOOTING.md, DEVELOPMENT.md and TEST-REPORT.md.
+

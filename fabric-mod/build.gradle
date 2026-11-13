@@ -22,6 +22,7 @@ loom {
     runs {
         client {
             if (project.hasProperty('stevecountSmoke')) vmArg '-Dstevecount.smoke=true'
+            if (project.hasProperty('stevecountFollowerSmoke')) vmArg '-Dstevecount.followerSmoke=true'
         }
     }
 }

@@ -11,8 +11,11 @@
 9. Appearance: choose a preset/head, size, and opacity. Move HUD opens the drag editor. Save position, then Save & Done.
 10. Testing: enable Demo to preview without Internet, TikTok, or the companion. Demo counts are visibly labeled and do not become stream statistics. Click Connect to return to real data.
 
+For the optional in-world follower, open **Character → Display** and choose **Character** or **Both**. See CHARACTER.md. Current menu tabs are **Connect**, **HUD**, **Demo**, **Character**, and **More**.
+
 Fabric does not need Mod Menu; use K or /stevecount. NeoForge's Mods → Config button is loader-specific.
 
 The Fabric and NeoForge builds share all HUD/settings/bridge code. Settings use the same `config/stevecount.json` schema in each instance. A separate instance has its own settings file; switching instances does not automatically copy it. No world files are modified.
 
 Both builds use the existing unofficial TikTokLive integration and the same localhost companion protocol. Real-stream availability remains subject to TikTok and the signing service; see TEST-REPORT.md for verification limits.
+

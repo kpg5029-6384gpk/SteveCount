@@ -1,5 +1,16 @@
 # SteveCount verification report — 2026-11-12
 
+## Follower character update — 2026-11-13
+
+- Both loader builds compile; the core suite now contains **100 assertions**, including display modes, follower settings persistence, bounded route memory, corner-following, speed limits, idle camera turns, teleport reset, shortest-angle rotation, and truthful unknown/zero/stale/demo labels.
+- Fabric and NeoForge each passed an **in-world smoke test in a fresh isolated QA world**, producing Steve/Alex, small zero-count demo, large stale-demo, character-only and teleport captures. The test checks that the avatar enters the render-state list, moves, catches up after teleport, and stops rendering in HUD-only mode.
+- In-world screenshots were inspected. A final Fabric nine-screen GUI/preset smoke test also passed and its Character settings capture was inspected. The native nameplate anchor was adjusted after visual inspection.
+- The first simultaneous NeoForge test was paused by lost focus and failed the test's render-frame assertion. The explicit test harness now disables pause-on-lost-focus in its isolated profile; the rerun passed. This test-only setting is not changed by the production feature.
+- Rendering uses detached AvatarRenderState objects, not a spawned client/server entity. The production code does not create world entities or send movement/interaction packets. Only the explicit opt-in QA harness creates and teleports a player in its new test world.
+- These new checks supersede the earlier no-in-world-testing limitation for the follower feature. They do **not** establish live TikTok integration, multiplayer/third-party shader compatibility, or FPS performance. The in-world counts used clearly labeled demo data.
+
+The companion implementation is unchanged; the GitHub release workflow repeats its tests and standalone EXE startup check before publishing.
+
 ## Fabric addition and NeoForge regression verification
 
 - Added Fabric 26.3 with Fabric Loader 0.20.1, Fabric API 0.166.2+26.3, Loom 1.19.4, Gradle 9.8.2, and Java 25.

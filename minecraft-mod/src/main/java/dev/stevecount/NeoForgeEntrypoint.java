@@ -16,11 +16,12 @@ import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 public final class NeoForgeEntrypoint {
     public NeoForgeEntrypoint(IEventBus bus,ModContainer container) {
         SteveCount.initialize(FMLPaths.CONFIGDIR.get());
+        NeoForge.EVENT_BUS.addListener((ExtractLevelRenderStateEvent e)->FollowerCharacter.extract(e.getRenderState()));
         container.registerExtensionPoint(IConfigScreenFactory.class,(mc,parent)->new SettingsScreen(parent));
         bus.addListener((RegisterKeyMappingsEvent e)->e.register(SteveCount.key));
         bus.addListener((RegisterGuiLayersEvent e)->e.registerAboveAll(Identifier.fromNamespaceAndPath("stevecount","hud"),(g,d)->{
             var mc=Minecraft.getInstance();
-            if(mc.player!=null && !mc.gui.hud.isHidden() && !(mc.gui.screen() instanceof MoveScreen)) Hud.draw(g,false);
+            if(SteveCount.settings.showHud() && mc.player!=null && !mc.gui.hud.isHidden() && !(mc.gui.screen() instanceof MoveScreen)) Hud.draw(g,false);
         }));
         NeoForge.EVENT_BUS.addListener((RegisterClientCommandsEvent e)->e.getDispatcher().register(Commands.literal("stevecount").executes(c->{Minecraft.getInstance().schedule(SteveCount::open);return 1;})));
         NeoForge.EVENT_BUS.addListener((ClientTickEvent.Post e)->SteveCount.tick());

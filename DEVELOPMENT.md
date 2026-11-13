@@ -1,5 +1,11 @@
 # Development
 
+## Follower character
+
+`FollowTrail` keeps a bounded route and computes smooth follower movement. `FollowerCharacter` samples client terrain and appends a new AvatarRenderState to the level's render state. It never creates, registers, spawns, saves, or sends an entity. Fabric uses LevelExtractionEvents.END_EXTRACTION; NeoForge uses ExtractLevelRenderStateEvent. The renderer receives only snapshot fields, not the trail or world reference. Built-in Steve/Alex skins and the player's already-loaded skin require no extra HTTP requests.
+
+Run either module's `runClient -PstevecountFollowerSmoke` for the opt-in in-world test. This explicit development flag creates a **new named QA world** in that module's isolated run directory, captures the follower, checks rendered frames, walking, teleport catch-up and disabled-mode suppression, then exits. It does not open an existing user world. Production installations never activate it unless that JVM property is deliberately supplied.
+
 ## Multi-loader layout
 
 `common/src/main/java` contains the shared HUD, settings, bridge, demo, milestones and screens. `minecraft-mod` supplies only the NeoForge entrypoint; `fabric-mod` supplies the Fabric client entrypoint and metadata. Each build compiles shared sources directly, so there is no extra runtime shared-library JAR. Both are client-only.

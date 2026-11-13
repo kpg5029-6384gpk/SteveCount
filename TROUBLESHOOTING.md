@@ -1,5 +1,9 @@
 # Troubleshooting
 
+- **Follower missing:** join a world, choose Character or Both in the Character tab, make sure F1 is off, then Recall companion. Press F5 or turn around while standing still; a follower behind you is normally outside a first-person camera's view. It resets when you leave the world or change dimension.
+- **Other players cannot see the follower:** expected. It is a client-side render effect, captured in your game view, not a server entity.
+- **Follower stuck behind complex terrain:** use Recall companion or turn Grounded off for hovering. This lightweight route follower does not run full mob pathfinding.
+
 - **Fabric says incompatible mod:** install SteveCount-26.3-Fabric.jar, Fabric Loader 0.20.1+, and Fabric API 0.166.2+26.3 for Minecraft 26.3. Keep only one SteveCount JAR. The NeoForge JAR cannot load on Fabric.
 - **No Mods → Config button under Fabric:** use K or /stevecount; those open the complete settings screen without Mod Menu.
 

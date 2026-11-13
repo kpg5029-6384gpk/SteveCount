@@ -37,6 +37,8 @@ public final class SteveCount {
     }
     static void changeDemo(long n) { demoCount=Math.max(0,n);demoPeak=Math.max(demoPeak,demoCount); }
     static void tick() {
+        FollowerCharacter.tick();
+        if(Boolean.getBoolean("stevecount.followerSmoke")) FollowerSmokeHarness.tick();
         if(Boolean.getBoolean("stevecount.smoke")) SmokeHarness.tick();
         while(key.consumeClick()) open();
         long now=System.currentTimeMillis();

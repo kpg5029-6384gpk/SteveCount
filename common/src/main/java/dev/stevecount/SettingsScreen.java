@@ -21,8 +21,8 @@ public final class SettingsScreen extends Screen {
     void refresh() { rebuildWidgets(); }
     @Override protected void init() {
         left=(width-320)/2;y=58;var c=SteveCount.settings;
-        String[] tabs={"Connection","Appearance","Testing","Advanced"};
-        for(int i=0;i<4;i++) {final int index=i;button(tabs[i],left+i*81,29,77,()->{tab=index;refresh();});}
+        String[] tabs={"Connect","HUD","Demo","Character","More"};
+        for(int i=0;i<5;i++) {final int index=i;button(tabs[i],left+i*65,29,60,()->{tab=index;refresh();});}
         if(tab==0) {
             input=addRenderableWidget(new EditBox(font,left,y,320,20,Component.literal("TikTok username or LIVE URL")));
             input.setMaxLength(512);input.setHint(Component.literal("@username or TikTok LIVE URL"));input.setValue(c.username);input.setResponder(v->c.username=v);y+=26;
@@ -36,7 +36,7 @@ public final class SettingsScreen extends Screen {
             slider("Opacity",0,1,c.opacity,v->c.opacity=(float)v);
             row("Background: "+c.background,()->{c.background=!c.background;refresh();},"Border: "+c.border,()->{c.border=!c.border;refresh();});
             row("LIVE label: "+c.liveLabel,()->{c.liveLabel=!c.liveLabel;refresh();},"Abbreviate: "+c.abbreviated,()->{c.abbreviated=!c.abbreviated;refresh();});
-            row("Move HUD",()->minecraft.gui.setScreen(new MoveScreen(this)),"Reset appearance",()->{String user=c.username;boolean auto=c.autoConnect;SteveCount.settings=new Settings();SteveCount.settings.username=user;SteveCount.settings.autoConnect=auto;refresh();});
+            row("Move HUD",()->minecraft.gui.setScreen(new MoveScreen(this)),"Reset HUD",()->{c.resetHudAppearance();refresh();});
         } else if(tab==2) {
             row("Demo: "+SteveCount.demo,()->{SteveCount.demo(!SteveCount.demo);refresh();},"Auto simulate: "+SteveCount.automatic,()->{if(!SteveCount.demo) SteveCount.demo(true);SteveCount.automatic=!SteveCount.automatic;refresh();});
             input=addRenderableWidget(new EditBox(font,left,y,156,20,Component.literal("Demo viewer count")));
@@ -46,6 +46,12 @@ public final class SettingsScreen extends Screen {
             row("Simulate lost connection",()->{if(!SteveCount.demo)SteveCount.demo(true);SteveCount.demoStatus="Reconnecting";},"Simulate offline",()->{if(!SteveCount.demo)SteveCount.demo(true);SteveCount.demoStatus="Offline";});
             row("Restore demo live",()->{if(!SteveCount.demo)SteveCount.demo(true);SteveCount.demoStatus="Demo Mode";},"Reset demo milestones",()->{SteveCount.reached.clear();SteveCount.demoPeak=SteveCount.demoCount;});
             button("Preview / move HUD",left,y,320,()->minecraft.gui.setScreen(new MoveScreen(this)));
+        } else if(tab==3) {
+            row("Display: "+c.displayMode,()->{c.displayMode=next(c.displayMode,"HUD","Character","Both");FollowerCharacter.recall();refresh();},"Skin: "+c.characterSkin,()->{c.characterSkin=next(c.characterSkin,"Steve","Alex","Player");refresh();});
+            slider("Character size",.25,1,c.characterScale,v->c.characterScale=(float)v);
+            slider("Follow distance",1.5,6,c.followDistance,v->c.followDistance=(float)v);
+            row("Count label: "+c.characterLabel,()->{c.characterLabel=!c.characterLabel;refresh();},"Grounded: "+c.characterGrounded,()->{c.characterGrounded=!c.characterGrounded;refresh();});
+            row("Recall companion",FollowerCharacter::recall,"Reset character",()->{c.displayMode="HUD";c.characterSkin="Steve";c.characterScale=.55f;c.followDistance=2.5f;c.characterLabel=c.characterGrounded=true;FollowerCharacter.recall();refresh();});
         } else {
             row("Animations: "+c.animations,()->{c.animations=!c.animations;refresh();},"Milestone sound: "+c.sound,()->{c.sound=!c.sound;refresh();});
             row("Milestone toast: "+c.toast,()->{c.toast=!c.toast;refresh();},"Reset position",()->{c.x=c.y=0;c.offsetX=c.offsetY=8;refresh();});
@@ -74,6 +80,10 @@ public final class SettingsScreen extends Screen {
             String time=s.updated()==0?"No viewer events yet":DateTimeFormatter.ofPattern("HH:mm:ss").format(Instant.ofEpochSecond((long)s.updated()).atZone(ZoneId.systemDefault()));
             g.text(font,"Last count: "+time,left,151,0xFFB7CAD0);
             g.text(font,font.plainSubstrByWidth(s.message(),320),left,165,0xFFFFC267);
+        }
+        if(tab==3) {
+            g.text(font,"Client-only companion. Join a world to see it.",left,185,0xFFB7CAD0);
+            g.text(font,"Press F5 for third-person view. No server mod.",left,197,0xFFB7CAD0);
         }
         if(!SteveCount.message.isEmpty())g.text(font,font.plainSubstrByWidth(SteveCount.message,320),left,height-39,0xFFFFC267);
     }

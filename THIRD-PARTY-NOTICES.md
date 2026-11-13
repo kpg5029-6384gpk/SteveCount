@@ -23,6 +23,7 @@ TikTokLive and TikTokLiveProto include modified AGPL-3.0 terms with integration 
 - httpcore 1.0.9: BSD-3-Clause
 - httpx 0.28.1: BSD-3-Clause
 - idna 3.20: BSD-3-Clause
+- imageio-ffmpeg 0.8.1: BSD-2-Clause
 - iniconfig 2.3.1: MIT
 - mashumaro 3.23: Apache-2.0
 - multidict 7.2.1: Apache-2.0
