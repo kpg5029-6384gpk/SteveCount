@@ -20,7 +20,8 @@ final class GiftPunch {
         if(level!=mc.level) {level=mc.level;readyTicks=0;animationStart=0;}
         boolean eligible=mc.player!=null && mc.player.isAlive() && mc.getSingleplayerServer()!=null
             && !mc.isPaused() && mc.gui.screen()==null && SteveCount.settings.giftPunch
-            && SteveCount.settings.showCharacter() && !SteveCount.demo;
+            && SteveCount.settings.showCharacter() && !SteveCount.demo
+            && SteveCount.bridge.snapshot.status().equals("Live");
         readyTicks=eligible?readyTicks+1:0;
         boolean hit=cursor.accept(SteveCount.bridge.gifts,System.currentTimeMillis()/1000d,
             readyTicks>20 && SteveCount.bridge.snapshot.status().equals("Live"));
