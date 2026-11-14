@@ -3,7 +3,8 @@ import contextlib
 import logging
 from aiohttp import web
 from TikTokLive import TikTokLiveClient
-from TikTokLive.events import ConnectEvent, RoomUserSeqEvent, LiveEndEvent
+from TikTokLive.events import ConnectEvent, RoomUserSeqEvent, LiveEndEvent, GiftEvent
+from gifts import Gifts
 from TikTokLive.client.errors import UserOfflineError
 from core import State, normalize, backoff
 
@@ -15,6 +16,7 @@ class Service:
         self.state = State()
         self.task = None
         self.client = None
+        self.gifts = Gifts()
 
     async def stop(self):
         if self.client:
@@ -55,9 +57,17 @@ class Service:
             async def ended(event):
                 self.state.status = 'Offline'
                 await client.disconnect()
+            @client.on(GiftEvent)
+            async def gift(event):
+                if self.state.status != 'Live':
+                    return
+                try:
+                    self.gifts.event(event)
+                except (ValueError, AttributeError, TypeError):
+                    LOG.warning('Rejected malformed gift event')
             try:
                 # start returns the websocket task; avoid connect()'s nested-loop cancellation cleanup.
-                task = await client.start(fetch_gift_info=False, fetch_room_info=False)
+                task = await client.start(fetch_gift_info=True, fetch_room_info=False)
                 await task
                 if self.state.status != 'Offline':
                     self.state.status = 'Reconnecting'
@@ -86,7 +96,7 @@ class Service:
             return await handler(request)
         app = web.Application(middlewares=[security], client_max_size=2048)
         async def status(request):
-            return web.json_response(self.state.snapshot())
+            return web.json_response({**self.state.snapshot(), 'gifts': self.gifts.snapshot()})
         async def control(request):
             try:
                 data = await request.json()
@@ -97,6 +107,7 @@ class Service:
             except (ValueError, KeyError, TypeError):
                 raise web.HTTPBadRequest(text='Invalid action or username')
             await self.stop()
+            self.gifts = Gifts()
             if action == 'connect':
                 self.state = State(username=username, status='Connecting')
                 self.task = asyncio.create_task(self.watch())

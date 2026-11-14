@@ -52,6 +52,7 @@ public final class SettingsScreen extends Screen {
             slider("Follow distance",1.5,6,c.followDistance,v->c.followDistance=(float)v);
             row("Count label: "+c.characterLabel,()->{c.characterLabel=!c.characterLabel;refresh();},"Grounded: "+c.characterGrounded,()->{c.characterGrounded=!c.characterGrounded;refresh();});
             row("Recall companion",FollowerCharacter::recall,"Reset character",()->{c.displayMode="HUD";c.characterSkin="Steve";c.characterScale=.55f;c.followDistance=2.5f;c.characterLabel=c.characterGrounded=true;FollowerCharacter.recall();refresh();});
+            row("Gift damage: "+c.giftPunch,()->{c.giftPunch=!c.giftPunch;c.save();refresh();},"Preview punch (no damage)",GiftPunch::preview);
         } else {
             row("Animations: "+c.animations,()->{c.animations=!c.animations;refresh();},"Milestone sound: "+c.sound,()->{c.sound=!c.sound;refresh();});
             row("Milestone toast: "+c.toast,()->{c.toast=!c.toast;refresh();},"Reset position",()->{c.x=c.y=0;c.offsetX=c.offsetY=8;refresh();});
@@ -82,8 +83,7 @@ public final class SettingsScreen extends Screen {
             g.text(font,font.plainSubstrByWidth(s.message(),320),left,165,0xFFFFC267);
         }
         if(tab==3) {
-            g.text(font,"Client-only companion. Join a world to see it.",left,185,0xFFB7CAD0);
-            g.text(font,"Press F5 for third-person view. No server mod.",left,197,0xFFB7CAD0);
+            g.text(font,"Real fist damage. Single-player. Can kill.",left,height-39,0xFFFFC267);
         }
         if(!SteveCount.message.isEmpty())g.text(font,font.plainSubstrByWidth(SteveCount.message,320),left,height-39,0xFFFFC267);
     }

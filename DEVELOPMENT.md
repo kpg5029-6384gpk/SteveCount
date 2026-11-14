@@ -49,4 +49,12 @@ The token is a same-user boundary, not protection from malicious software alread
 
 Live-stream end-to-end verification needs an accessible active TikTok stream. Automated mocks do not establish upstream availability. Native Windows visual automation failed to initialize in the build environment and Application Control blocked the diagnostic EXE. Refer to TEST-REPORT.md; do not infer gameplay or live-stream verification from successful compilation.
 
-Milestone visual feedback highlights the number briefly and shows a small HUD notification rather than using the vanilla toast queue. Arbitrary custom remote head lookup and companion auto-launch are omitted. Color palettes are available in the GUI; arbitrary colors require local JSON editing. No hosted services, other streaming providers, browser overlay, likes, chat or gifts are implemented.
+Milestone visual feedback highlights the number briefly and shows a small HUD notification rather than using the vanilla toast queue. Arbitrary custom remote head lookup and companion auto-launch are omitted. Color palettes are available in the GUI; arbitrary colors require local JSON editing. No hosted services, other streaming providers, browser overlay, likes or chat are implemented.
+
+## Gift action protocol
+
+`gifts.py` filters completed Hand Heart/Hand Hearts events at diamond_count=100, deduplicates bounded IDs, and rate-limits to one accepted event per five seconds. Status adds `gifts: {session, sequence, events: [{sequence, created}]}`. Timestamps are epoch seconds. Only events at most five seconds old are included. Sender identity stays in bounded companion memory and is never sent to Minecraft or saved.
+
+`GiftCursor` baselines new sessions, consumes while disarmed, rejects stale events and enforces another client-side cooldown. `GiftPunch` requires active single-player gameplay, real LIVE state, enabled character/damage and no demo. It schedules vanilla Player.attack on the integrated server thread with an unregistered empty-handed survival Player, fully charged, grounded, not sprinting, no effects. Never writes target health in production. The explicit opt-in changes gameplay; visual-only claims apply with gift damage disabled.
+
+Use `-PstevecountPunchSmoke` with runClient to create an isolated disposable world, run the existing follower checks and then exercise synthetic-gift damage. QA-only health/equipment/world changes occur solely in that fresh test world.

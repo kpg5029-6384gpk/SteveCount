@@ -58,8 +58,9 @@ final class FollowerSmokeHarness {
         if(worldTicks==540) {
             if(FollowerCharacter.extractedFrames!=disabledFrames)throw new AssertionError("Disabled follower still renders");
             LogUtils.getLogger().info("SteveCount follower world smoke passed: skins, sizes, labels, movement, teleport and disable; {} frames",FollowerCharacter.extractedFrames);
-            mc.stop();
+            if(!Boolean.getBoolean("stevecount.punchSmoke"))mc.stop();
         }
+        if(Boolean.getBoolean("stevecount.punchSmoke") && worldTicks>=550)PunchSmokeHarness.tick(worldTicks);
     }
     private static void teleport(double x,double z) {
         var mc=Minecraft.getInstance();var server=mc.getSingleplayerServer();var id=mc.player.getUUID();

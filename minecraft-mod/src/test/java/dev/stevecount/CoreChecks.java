@@ -7,6 +7,21 @@ public final class CoreChecks {
     static int checks;
     static void check(boolean ok,String message) {checks++;if(!ok)throw new AssertionError(message);}
     public static void main(String[] args) throws Exception {
+        var cursor=new GiftCursor();
+        var feed=com.google.gson.JsonParser.parseString("{\"session\":\"a\",\"sequence\":1,\"events\":[{\"sequence\":1,\"created\":100}]}").getAsJsonObject();
+        check(!cursor.accept(feed,100,true),"First feed cannot replay history");
+        feed.addProperty("sequence",2);feed.getAsJsonArray("events").get(0).getAsJsonObject().addProperty("sequence",2);
+        check(cursor.accept(feed,101,true),"Fresh gift triggers");
+        check(!cursor.accept(feed,107,true),"Duplicate gift rejected");
+        feed.addProperty("sequence",3);feed.getAsJsonArray("events").get(0).getAsJsonObject().addProperty("sequence",3);
+        check(!cursor.accept(feed,102,true),"Cooldown skips gift");
+        check(!cursor.accept(feed,108,true),"Cooldown gift never queued");
+        feed.addProperty("session","b");check(!cursor.accept(feed,109,true),"Companion restart baseline");
+        feed.addProperty("sequence",4);check(!cursor.accept(feed,110,false),"Disabled discards gifts");
+        check(!cursor.accept(feed,111,true),"Re-enabling cannot replay");
+        feed.addProperty("sequence",5);feed.getAsJsonArray("events").get(0).getAsJsonObject().addProperty("sequence",5);
+        check(!cursor.accept(feed,120,true),"Expired gift discarded");
+        check(!cursor.accept(new com.google.gson.JsonObject(),120,true),"Malformed gift feed harmless");
         for(int screen:new int[]{320,427,640,854,1920,3840}) {
             for(int extent:new int[]{26,100,300,900}) {
                 for(float anchor:new float[]{0,.5f,1}) {
@@ -27,9 +42,11 @@ public final class CoreChecks {
         var originalDirectory=Settings.configDirectory;
         try {
             Settings.configDirectory=directory;
-            config.displayMode="Both";config.characterSkin="Alex";config.characterScale=.4f;config.followDistance=4;
+            config.displayMode="Both";config.characterSkin="Alex";config.characterScale=.4f;config.followDistance=4;config.giftPunch=true;
             config.save();
             var saved=Settings.load();
+            check(saved.giftPunch,"Gift damage opt-in persists");
+            check(!new Settings().giftPunch,"Gift damage defaults off");
             check(saved.username.equals("example") && saved.scale==2 && saved.x==.75f,"Actual Settings.save/load persistence");
             check(saved.displayMode.equals("Both") && saved.characterSkin.equals("Alex") && saved.characterScale==.4f && saved.followDistance==4,"Follower preferences persist");
             Files.writeString(directory.resolve("stevecount.json"),"malformed JSON");

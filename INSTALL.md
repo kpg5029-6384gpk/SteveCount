@@ -17,5 +17,7 @@ Only launch one companion per Windows user at a time. Restarting it rotates its 
 
 Windows organizational Application Control can block unsigned executables. This build is unsigned. The development environment blocked a diagnostic EXE; standalone execution has not been fully verified here. Do not disable security controls. Use an approved build/signing process on managed machines.
 
-To uninstall, close the companion and remove SteveCount's JAR and extracted folder. Its settings are in the instance's `config/stevecount.json`, and local companion files in `%LOCALAPPDATA%\SteveCount`. No world data or server configuration is touched.
+To enable optional single-player Hand Heart damage, update both components and follow [GIFTS.md](GIFTS.md). It uses normal fist damage and can kill in hardcore. Off by default.
+
+To uninstall, close the companion and remove SteveCount's JAR and extracted folder. Its settings are in the instance's `config/stevecount.json`, and local companion files in `%LOCALAPPDATA%\SteveCount`. No entity or custom data is saved in worlds. Normal health/gameplay consequences of previously enabled gift punches remain.
 

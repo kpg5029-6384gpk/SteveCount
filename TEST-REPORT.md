@@ -1,5 +1,14 @@
 # SteveCount verification report — 2026-11-12
 
+## Hand Heart punch update — 2026-11-14
+
+- Both Fabric and NeoForge passed the new in-world gift-punch test in fresh disposable QA worlds. A synthetic localhost gift feed passed through the production cursor/action path and removed exactly **1 HP (half a heart)** unarmored. Checks also passed for duplicate-feed suppression, vanilla immediate-hit immunity, reduced damage under diamond armor, creative immunity and lethal damage at low health. No real hardcore save was used.
+- The first damage assertion ran in the existing Peaceful QA world, whose automatic regeneration restored health before the assertion. The test now explicitly uses Normal difficulty for damage checks; both reruns passed.
+- The companion suite now has **36 passing tests locally**, including the installed-library GiftEvent protobuf shape, completed streaks, name/value filtering, duplicate IDs, global cooldown, discarded cooldown events, bounded memory, stale feed pruning and companion sessions. The runtime-specific SSL regression may skip on standard Python.
+- Both loader builds pass **112 Java core assertions**, including feed/session baselining, unknown/malformed payloads, cooldown/replay/expiry behavior and damage opt-in settings persistence/defaults.
+- No actual paid TikTok gift has been received or verified. Real TikTok end-to-end integration remains unverified. Multiplayer damage is intentionally unsupported; the action uses the single-player integrated server only.
+- Optional gift damage is a deliberate gameplay change, off by default. Earlier render-only/no-gameplay statements describe the HUD and visual follower, not the enabled gift action.
+
 ## Follower character update — 2026-11-13
 
 - Both loader builds compile; the core suite now contains **100 assertions**, including display modes, follower settings persistence, bounded route memory, corner-following, speed limits, idle camera turns, teleport reset, shortest-angle rotation, and truthful unknown/zero/stale/demo labels.

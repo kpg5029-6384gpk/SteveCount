@@ -13,6 +13,7 @@ final class Bridge {
         static Snapshot empty(String state, String message) { return new Snapshot(state,null,0,0,false,message,"",""); }
     }
     volatile Snapshot snapshot = Snapshot.empty("Not Configured", "");
+    volatile JsonObject gifts = new JsonObject();
     private final ScheduledExecutorService worker = Executors.newSingleThreadScheduledExecutor(r -> { var t=new Thread(r,"SteveCount bridge");t.setDaemon(true);return t; });
     private final HttpClient http = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(2)).build();
     private volatile boolean enabled;
@@ -36,6 +37,7 @@ final class Bridge {
             Long count=j.get("viewers").isJsonNull()?null:j.get("viewers").getAsLong();
             if(count!=null && count<0) throw new IllegalArgumentException("Invalid count");
             snapshot=new Snapshot(j.get("status").getAsString(),count,j.get("peak").getAsLong(),j.get("updated").getAsDouble(),j.get("stale").getAsBoolean(),j.get("message").getAsString(),j.get("username").getAsString(),j.get("room").getAsString());
+            gifts=j.has("gifts")?j.getAsJsonObject("gifts"):new JsonObject();
         } catch(Exception ex) {
             var old=snapshot;
             snapshot=new Snapshot("Reconnecting",old.viewers,old.peak,old.updated,old.viewers!=null,"Launch SteveCount Companion; "+ex.getClass().getSimpleName(),old.username,old.room);
@@ -43,6 +45,7 @@ final class Bridge {
     }
     void control(String action, String username) {
         enabled=false;
+        gifts=new JsonObject();
         snapshot=Snapshot.empty(action.equals("connect")?"Connecting":"Disconnected","");
         worker.execute(() -> {
             try { var j=new JsonObject();j.addProperty("action",action);j.addProperty("username",username); request("control",j.toString()); }

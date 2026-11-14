@@ -24,6 +24,6 @@ The global **Animations** setting under **More** disables its limb/idle animatio
 
 ## Client-only behavior
 
-This is a render-only avatar, not an entity inserted into the world. It has no collision, health, AI, inventory, hitbox, or interaction. It cannot push mobs, trigger plates, take damage, or change blocks. No server installation is needed and it is not saved in your world. Other players do not see it, but streaming software capturing your Minecraft view can capture it.
+The visual avatar is render-only, not an entity inserted into the world. It has no collision, health, AI, inventory or hitbox. It cannot push mobs, trigger plates, take damage or change blocks. The optional **Gift damage** switch separately enables ordinary single-player fist damage from a 100-coin Hand Heart; it is off by default and can kill in hardcore. See [GIFTS.md](GIFTS.md). Other players do not see the avatar, but streaming software capturing your Minecraft view can capture it.
 
 The movement is a lightweight route follower, not full mob pathfinding. It can catch up by repositioning when stuck or far away; it does not break blocks or navigate every obstacle like a server-controlled pet. Steve/Alex textures come from the installed game; the reference video's custom model and texture are not copied.

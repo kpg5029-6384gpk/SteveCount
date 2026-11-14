@@ -19,6 +19,7 @@ public class Settings {
     public String displayMode = "HUD", characterSkin = "Steve";
     public float characterScale = .55f, followDistance = 2.5f;
     public boolean characterLabel = true, characterGrounded = true;
+    public volatile boolean giftPunch = false;
     static Path configDirectory = Path.of("config");
     private static Path path() { return configDirectory.resolve("stevecount.json"); }
     public void validate() {

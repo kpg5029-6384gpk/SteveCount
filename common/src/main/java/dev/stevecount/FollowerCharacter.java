@@ -88,6 +88,9 @@ final class FollowerCharacter {
         if(!c.showCharacter() || trail.position==null || level!=mc.level || mc.player==null || !mc.player.isAlive() || mc.gui.hud.isHidden())return;
         float partial=world.worldPartialTicks;
         Vec3 pos=trail.interpolated(partial);
+        float punch=(System.currentTimeMillis()-GiftPunch.animationStart)/600f;
+        boolean punching=c.animations && punch>=0 && punch<1;
+        if(punching)pos=pos.lerp(GiftPunch.strikePosition(mc.player.position(),mc.player.getYRot()),Math.sin(punch*Math.PI));
         AvatarRenderState state=new AvatarRenderState();
         state.entityType=EntityTypes.PLAYER;
         state.x=pos.x;state.y=pos.y;state.z=pos.z;
@@ -102,6 +105,10 @@ final class FollowerCharacter {
         state.yRot=Math.clamp(FollowTrail.wrap(look-state.bodyRot),-55,55);
         state.walkAnimationPos=trail.walk;
         state.walkAnimationSpeed=c.animations?trail.speed:0;
+        if(punching) {
+            state.swingAnimation=punch;
+            state.currentSwing=new net.minecraft.world.entity.LivingEntity.SwingDescription(net.minecraft.world.InteractionHand.MAIN_HAND,net.minecraft.world.item.component.SwingAnimation.DEFAULT,6);
+        }
         state.skin=switch(c.characterSkin) {case "Alex"->ALEX;case "Player"->mc.player.getSkin();default->STEVE;};
         state.showCape=false;
         state.distanceToCameraSq=world.cameraRenderState.pos.distanceToSqr(pos);

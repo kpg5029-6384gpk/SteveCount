@@ -1,5 +1,7 @@
 # SteveCount
 
+**Optional 100-coin Hand Heart punch:** in single-player, enable **Character → Gift damage** to have the buddy perform one ordinary fist attack per accepted gift. Unarmored damage is half a heart; vanilla armor and immunity apply. Five-second cooldown, no queued hits, off by default. Can kill in hardcore. Update both the JAR and EXE. See [GIFTS.md](GIFTS.md).
+
 Download the Windows bundles from the [GitHub Releases page](https://github.com/kpg5029-6384gpk/SteveCount/releases). Choose **SteveCount-Windows-Fabric.zip** or **SteveCount-Windows-NeoForge.zip**, matching the loader in your Modrinth instance.
 
 A client-side Minecraft HUD for TikTok LIVE concurrent viewers. SteveCount includes a Steve/Alex/player head, four presets, drag positioning, viewer milestones, and a demo that works without Internet or the companion.
@@ -21,7 +23,7 @@ Download **SteveCount-Windows-Fabric.zip** for a Fabric instance, or **SteveCoun
 5. Under Connection, enter `@yourname` or `https://www.tiktok.com/@yourname/live`. Click Connect.
 6. Begin your TikTok LIVE. SteveCount retries while you are offline. The count appears only after a genuine viewer event arrives.
 
-The HUD renders inside Minecraft's normal client HUD and is included in captures of the game. F1 hides it along with the standard HUD. The mod never changes gameplay or world files. It does not need a matching server mod.
+The HUD renders inside Minecraft's normal client HUD and is included in captures of the game. F1 hides it along with the standard HUD. The HUD/follower are visual; the optional single-player gift punch explicitly changes gameplay when enabled. No matching server mod is needed for single-player.
 
 ## Customize
 

@@ -1,4 +1,4 @@
-name: Build and publish SteveCount follower character
+name: Build and publish SteveCount Hand Heart punch
 on:
   workflow_dispatch:
   push:
@@ -82,7 +82,7 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'Packaged companion smoke test failed' }
       - name: Package verified release
         run: |
-          Add-Content TEST-REPORT.md "`n## GitHub-hosted Windows verification`nThis build passed the packaged EXE startup and authenticated localhost status smoke test on a GitHub-hosted Windows runner. This supersedes the local machine execution blocker for this newly rebuilt artifact. Live TikTok streaming and in-world gameplay remain unverified.`n"
+          Add-Content TEST-REPORT.md "`n## GitHub-hosted Windows verification`nThis build passed the packaged EXE startup and authenticated localhost status smoke test on a GitHub-hosted Windows runner. This supersedes the local machine execution blocker for this newly rebuilt artifact. Live TikTok streaming/paid gifts remain unverified; local disposable-world punch checks are described above.`n"
           & .\.venv\Scripts\python.exe scripts/package.py
           if ($LASTEXITCODE -ne 0) { throw 'Packaging failed' }
           @'
@@ -107,17 +107,17 @@ jobs:
           GH_REPO: ${{ github.repository }}
         run: |
           @'
-          SteveCount follower character release candidate for Minecraft 26.3 with Fabric or NeoForge.
+          SteveCount Hand Heart punch release candidate for Minecraft 26.3 — Fabric and NeoForge.
 
-          Download SteveCount-Windows-Fabric.zip for Fabric Loader 0.20.1+ with Fabric API 0.166.2+26.3, or SteveCount-Windows-NeoForge.zip for NeoForge 26.3.0.102. Install only the JAR matching your loader. Both use the same companion EXE. Open settings with K or /stevecount.
+          Download SteveCount-Windows-Fabric.zip for Fabric Loader 0.20.1+ with Fabric API 0.166.2+26.3, or SteveCount-Windows-NeoForge.zip for NeoForge 26.3.0.102. Update BOTH the JAR and companion EXE. Install only one loader JAR.
 
-          NEW: optional miniature Steve/Alex/player-skin follower with the current viewer count above it. Open settings with K or /stevecount, select Character, and choose Display: Character or Both. Adjust size, follow distance, count label and grounded movement. Existing HUD mode remains the default. The character is client-only and is not a server entity. Other players cannot see it; game capture can.
+          NEW: optional 100-coin Hand Heart/Hand Hearts -> one normal unarmed buddy punch in single-player. Open K or /stevecount -> Character -> Display: Character/Both -> Gift damage: true -> Save & Done. Off by default. Unarmored damage is half a heart; ordinary armor, immunity, knockback and death rules apply. Can kill in hardcore. Five-second cooldown; skipped gifts never queue. Completed streaks cause at most one hit. Preview punch does no damage. See GIFTS.md.
 
-          Rebuilt on standard Windows Python, with the SSL packaging correction and betterproto2 metadata included. Both loader builds, 100 core assertions per loader, companion tests, packaged EXE startup, authenticated localhost status, and loader-specific ZIP integrity checks passed. Both loaders also passed local in-world follower tests for skins, sizes, demo counts, movement, teleport catch-up and disabling. See CHARACTER.md and FABRIC.md.
+          Both loaders passed local disposable-world tests for the synthetic gift feed, half-heart unarmored damage, armor reduction, vanilla immunity, creative immunity and lethal damage. Companion event/filter/security tests and Java core checks passed. The Windows runner also verified packaged EXE startup/authenticated localhost and ZIP integrity.
 
-          The world tests used clearly labeled demo counts. Live TikTok end-to-end integration, multiplayer/shader compatibility and FPS performance remain unverified. This is an unsigned release candidate, not a production-certified build. See TEST-REPORT.md inside the ZIP.
+          No actual paid TikTok gift or live stream end-to-end has been verified. Multiplayer gift damage is unsupported. This is an unsigned release candidate. See TEST-REPORT.md.
           '@ | Set-Content release-notes.md
-          $tag = 'v1.0.0-rc.4-build-' + $env:GITHUB_RUN_NUMBER
-          gh release create $tag dist/SteveCount-Windows-Fabric.zip dist/SteveCount-Windows-NeoForge.zip dist/SteveCount-26.3-Fabric.jar dist/SteveCount-Windows.zip dist/SteveCount-26.3-NeoForge.jar dist/SteveCount-Companion.exe dist/SteveCount-Source.zip dist/SHA256SUMS.txt --target $env:GITHUB_SHA --title "SteveCount Follower Character — Fabric + NeoForge" --notes-file release-notes.md --prerelease
+          $tag = 'v1.0.0-rc.5-build-' + $env:GITHUB_RUN_NUMBER
+          gh release create $tag dist/SteveCount-Windows-Fabric.zip dist/SteveCount-Windows-NeoForge.zip dist/SteveCount-26.3-Fabric.jar dist/SteveCount-Windows.zip dist/SteveCount-26.3-NeoForge.jar dist/SteveCount-Companion.exe dist/SteveCount-Source.zip dist/SHA256SUMS.txt --target $env:GITHUB_SHA --title "SteveCount Hand Heart Punch — Fabric + NeoForge" --notes-file release-notes.md --prerelease
           if ($LASTEXITCODE -ne 0) { throw 'Release publication failed' }
 
