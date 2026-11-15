@@ -25,7 +25,7 @@ public final class PlayerEmotesScreen extends Screen {
             final int row=i;
             rows.add(addRenderableWidget(Button.builder(Component.empty(),b->{
                 int index=page*5+row;
-                if(index<filtered.size()){BuddyEmotes.play(filtered.get(index));SteveCount.settings.save();minecraft.gui.setScreen(parent);}
+                if(index<filtered.size()){BuddyEmotes.play(filtered.get(index));SteveCount.settings.save();minecraft.gui.setScreen(minecraft.level!=null?null:parent);}
             }).bounds(left,60+i*24,300,20).build()));
         }
         previous=addRenderableWidget(Button.builder(Component.literal("< Previous"),b->{page--;updateRows();}).bounds(left,180,92,20).build());
