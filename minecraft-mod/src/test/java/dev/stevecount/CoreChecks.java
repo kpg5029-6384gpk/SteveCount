@@ -7,6 +7,24 @@ public final class CoreChecks {
     static int checks;
     static void check(boolean ok,String message) {checks++;if(!ok)throw new AssertionError(message);}
     public static void main(String[] args) throws Exception {
+        var pending=new PendingPunch();
+        check(pending.update(10000,true,true,false),"Unpaused menus accept punches immediately");
+        check(!pending.update(11000,true,true,false),"Actual strikes respect cooldown");
+        check(!pending.update(16000,true,true,true) && pending.waiting(),"Paused punch retained");
+        check(!pending.update(22000,true,true,true),"Paused gifts coalesce, never stack");
+        check(pending.update(23000,false,true,false),"Paused punch executes on resume");
+        check(!pending.update(23001,false,true,false),"Only one resumed hit");
+        check(!pending.update(29000,true,true,true),"Queue another paused gift");
+        check(!pending.update(90000,false,true,false) && !pending.waiting(),"Paused gift expires after a minute");
+        pending.update(100000,true,true,true);pending.update(100001,false,false,true);
+        check(!pending.waiting(),"Disabling or disconnecting clears paused gift");
+        check(BuddyEmotes.duration("Wave")==4000 && BuddyEmotes.duration("Dance")==6000 && BuddyEmotes.duration("Cheer")==4000,"Bounded emote durations");
+        check(BuddyEmotes.duration("unknown")==0,"Unknown emote rejected");
+        try(var skin=CoreChecks.class.getResourceAsStream("/assets/stevecount/textures/entity/fiishy.png")) {
+            check(skin!=null,"Fiishy texture bundled");
+            byte[] png=skin.readAllBytes();var header=java.nio.ByteBuffer.wrap(png);
+            check(header.getInt(0)==0x89504E47 && header.getInt(16)==64 && header.getInt(20)==64,"Fiishy texture is a 64x64 PNG");
+        }
         var cursor=new GiftCursor();
         var feed=com.google.gson.JsonParser.parseString("{\"session\":\"a\",\"sequence\":1,\"events\":[{\"sequence\":1,\"created\":100}]}").getAsJsonObject();
         check(!cursor.accept(feed,100,true),"First feed cannot replay history");
@@ -42,13 +60,13 @@ public final class CoreChecks {
         var originalDirectory=Settings.configDirectory;
         try {
             Settings.configDirectory=directory;
-            config.displayMode="Both";config.characterSkin="Alex";config.characterScale=.4f;config.followDistance=4;config.giftPunch=true;
+            config.displayMode="Both";config.characterSkin="Fiishy";config.characterHeadRide=true;config.characterScale=.4f;config.followDistance=4;config.giftPunch=true;
             config.save();
             var saved=Settings.load();
             check(saved.giftPunch,"Gift damage opt-in persists");
             check(!new Settings().giftPunch,"Gift damage defaults off");
             check(saved.username.equals("example") && saved.scale==2 && saved.x==.75f,"Actual Settings.save/load persistence");
-            check(saved.displayMode.equals("Both") && saved.characterSkin.equals("Alex") && saved.characterScale==.4f && saved.followDistance==4,"Follower preferences persist");
+            check(saved.displayMode.equals("Both") && saved.characterSkin.equals("Fiishy") && saved.characterHeadRide && saved.characterScale==.4f && saved.followDistance==4,"Follower skin and head ride preferences persist");
             Files.writeString(directory.resolve("stevecount.json"),"malformed JSON");
             check(Settings.load().preset.equals("Compact"),"Corrupt settings recover to defaults");
         } finally {

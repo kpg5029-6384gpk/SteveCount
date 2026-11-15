@@ -20,14 +20,12 @@ final class PunchSmokeHarness {
             SteveCount.bridge.gifts=com.google.gson.JsonParser.parseString("{\"session\":\"qa\",\"sequence\":0,\"events\":[]}").getAsJsonObject();
             server.execute(()->{server.setDifficulty(net.minecraft.world.Difficulty.NORMAL,true);var p=server.getPlayerList().getPlayer(id);p.setGameMode(GameType.SURVIVAL);p.setHealth(20);p.getFoodData().setFoodLevel(10);});
         }
-        if(tick==590) {
-            var feed=new com.google.gson.JsonObject();feed.addProperty("session","qa");feed.addProperty("sequence",1);
-            var events=new com.google.gson.JsonArray();var event=new com.google.gson.JsonObject();event.addProperty("sequence",1);event.addProperty("created",System.currentTimeMillis()/1000d);events.add(event);feed.add("events",events);
-            SteveCount.bridge.gifts=feed;
-        }
+        if(tick==570)mc.gui.setScreen(new net.minecraft.client.gui.screens.inventory.InventoryScreen(mc.player));
+        if(tick==590)gift(1);
         if(tick==594) {
             net.minecraft.client.Screenshot.grab(mc.gameDirectory,"stevecount-gift-punch.png",mc.gameRenderer.mainRenderTarget(),1,msg->LogUtils.getLogger().info("Punch QA screenshot: {}",msg.getString()));
         }
+        if(tick==610)mc.gui.setScreen(null);
         if(tick==610)server.execute(()->{
             var p=server.getPlayerList().getPlayer(id);
             check(p.getHealth()==19,"one unarmored fist punch must remove exactly 1 HP (half a heart); got "+p.getHealth());
@@ -44,13 +42,53 @@ final class PunchSmokeHarness {
             check(p.getHealth()>19 && p.getHealth()<20,"Armor reduces ordinary fist damage; got "+p.getHealth());
             p.setItemSlot(EquipmentSlot.CHEST,ItemStack.EMPTY);
         });
-        if(tick==690)server.execute(()->{
+        if(tick==670)server.execute(()->server.getPlayerList().getPlayer(id).setHealth(20));
+        if(tick==690)mc.gui.setScreen(new net.minecraft.client.gui.screens.PauseScreen(true));
+        if(tick==710) {check(mc.isPaused(),"Real pause menu pauses the game");gift(2);}
+        if(tick==730) {check(GiftPunch.pending.waiting(),"Gift retained in pause menu");check(mc.player.getHealth()==20,"No damage forced while truly paused");}
+        if(tick==750)mc.gui.setScreen(null);
+        if(tick==775)server.execute(()->check(server.getPlayerList().getPlayer(id).getHealth()==19,"One pending gift hits after resume"));
+        if(tick==800) {
+            SteveCount.settings.characterSkin="Fiishy";SteveCount.settings.giftPunch=false;
+            mc.options.setCameraType(net.minecraft.client.CameraType.FIRST_PERSON);
+            var d=FollowerCharacter.trail.position.add(0,.8,0).subtract(mc.player.getEyePosition());
+            mc.player.setYRot((float)Math.toDegrees(Math.atan2(-d.x,d.z)));
+            mc.player.setXRot((float)-Math.toDegrees(Math.atan2(d.y,Math.sqrt(d.x*d.x+d.z*d.z))));
+            BuddyEmotes.play("Wave");
+        }
+        if(tick==820) {check(FollowerCharacter.lastSmokeState.emote.equals("Wave"),"Wave render state");capture("fiishy-wave");}
+        if(tick==840)BuddyEmotes.play("Dance");
+        if(tick==860) {check(FollowerCharacter.lastSmokeState.emote.equals("Dance"),"Dance render state");capture("dance");}
+        if(tick==880)BuddyEmotes.play("Cheer");
+        if(tick==900) {check(FollowerCharacter.lastSmokeState.emote.equals("Cheer"),"Cheer render state");capture("cheer");}
+        if(tick==920) {
+            BuddyEmotes.stop();SteveCount.settings.characterHeadRide=true;
+            mc.options.setCameraType(net.minecraft.client.CameraType.THIRD_PERSON_FRONT);mc.player.setXRot(0);
+        }
+        if(tick==940) {
+            var state=FollowerCharacter.lastSmokeState;
+            check(state.headRide && state.scale==.18f,"Tiny seated head rider");
+            check(Math.abs(state.y-mc.player.getY()-mc.player.getBbHeight()+.12)<.05,"Rider tracks head height");capture("head-ride");
+        }
+        if(tick==960)SteveCount.settings.animations=false;
+        if(tick==980) {check(FollowerCharacter.lastSmokeState.headRide,"Head ride works with animations off");SteveCount.settings.animations=true;SteveCount.settings.characterHeadRide=false;mc.gui.setScreen(new EmoteScreen(null));}
+        if(tick==1000)capture("emote-menu");
+        if(tick==1020)mc.gui.setScreen(null);
+        if(tick==1100)server.execute(()->{
             var p=server.getPlayerList().getPlayer(id);p.setHealth(.5f);
             GiftPunch.attack(p,p.position().add(0,0,1));check(!p.isAlive(),"No artificial half-heart survival floor");
-            LogUtils.getLogger().info("SteveCount gift punch world QA PASSED: feed -> cursor -> animation -> vanilla fist damage (1 HP), duplicate prevention, i-frames, armor, creative immunity, lethal damage. Synthetic events only.");
+            LogUtils.getLogger().info("SteveCount menu/emote world QA PASSED: inventory gift damage, true pause/resume, vanilla fist/armor/immunity/lethal damage, Fiishy skin, Wave/Dance/Cheer, tiny head ride, animation toggle. Synthetic events only.");
             mc.execute(mc::stop);
         });
-        if(tick>750)throw new AssertionError("Punch QA timed out");
+        if(tick>1200)throw new AssertionError("Punch QA timed out");
+    }
+    private static void gift(int sequence) {
+        var feed=new com.google.gson.JsonObject();feed.addProperty("session","qa");feed.addProperty("sequence",sequence);
+        var events=new com.google.gson.JsonArray();var event=new com.google.gson.JsonObject();event.addProperty("sequence",sequence);event.addProperty("created",System.currentTimeMillis()/1000d);events.add(event);feed.add("events",events);
+        SteveCount.bridge.gifts=feed;
+    }
+    private static void capture(String name) {
+        var mc=Minecraft.getInstance();net.minecraft.client.Screenshot.grab(mc.gameDirectory,"stevecount-"+name+".png",mc.gameRenderer.mainRenderTarget(),1,msg->LogUtils.getLogger().info("Emote QA: {}",msg.getString()));
     }
 }
 

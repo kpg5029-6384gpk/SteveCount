@@ -20,6 +20,7 @@ def main():
     notices=DIST/'licenses'
     notices.mkdir(exist_ok=True)
     lines=['# Third-party notices','', 'SteveCount authored code: MIT; see LICENSE.',
+           'User-selected Fiishy skin: see SKIN-NOTICE.md for source and artwork attribution.',
            'Minecraft Steve/Alex textures are referenced from the installed game and are not redistributed.',
            'NeoForge MDK template: see minecraft-mod/TEMPLATE_LICENSE.txt in the source archive.',
            'TikTokLive and TikTokLiveProto include modified AGPL-3.0 terms with integration exceptions; full texts are included below.', '']

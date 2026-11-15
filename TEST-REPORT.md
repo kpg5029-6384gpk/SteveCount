@@ -1,5 +1,13 @@
 # SteveCount verification report — 2026-11-12
 
+## Menu fix, Fiishy skin and emotes — 2026-11-15
+
+- Both Fabric and NeoForge passed the extended in-world smoke test in separate new disposable QA worlds. A synthetic gift received with the actual inventory screen open removed exactly 1 HP without closing the inventory. A gift received during a real Escape pause was retained without damage, then removed exactly 1 HP after resume. Existing armor, immunity, creative and lethal damage checks still passed.
+- The core suite now contains **125 assertions** per loader, covering one-slot pause retention, expiry, coalescing, actual-hit cooldown, disconnect/disable clearing, skin/head-ride persistence, emote durations and the bundled PNG signature/dimensions in addition to prior checks. All **36 companion tests** passed locally; no companion protocol changes were needed.
+- Wave, Dance, Cheer and the tiny head rider entered the expected render states in both loaders. Head height/scale, animations-off head riding, and the new emote screen were checked. Representative final Fabric skin/emote/head-ride screenshots were inspected. An initial visual run revealed an incorrectly prefixed texture ID; it was corrected and the final skin rendered successfully on rerun.
+- The pose hook is client-only and marker-gated to BuddyRenderState. It does not change poses for normal players or mobs. The selected skin is bundled with a separate source/attribution notice. Cosmetic emotes have no gift bindings.
+- Tests use synthetic events and fresh QA worlds only. The requester reported the preceding version working during an actual LIVE; this is not a developer-run paid-gift test of this update. Real paid TikTok gifts for the new menu scenarios, multiplayer/shader compatibility and FPS profiling remain unverified.
+
 ## Hand Heart punch update — 2026-11-14
 
 - Both Fabric and NeoForge passed the new in-world gift-punch test in fresh disposable QA worlds. A synthetic localhost gift feed passed through the production cursor/action path and removed exactly **1 HP (half a heart)** unarmored. Checks also passed for duplicate-feed suppression, vanilla immediate-hit immunity, reduced damage under diamond armor, creative immunity and lethal damage at low health. No real hardcore save was used.

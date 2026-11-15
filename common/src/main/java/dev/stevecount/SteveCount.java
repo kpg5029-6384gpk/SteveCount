@@ -19,11 +19,13 @@ public final class SteveCount {
     static final Set<Long> reached = new HashSet<>();
     private static long lastDemo;
     static KeyMapping key;
+    static KeyMapping emoteKey;
 
     static void initialize(java.nio.file.Path configDirectory) {
         Settings.configDirectory=configDirectory;
         settings=Settings.load(); bridge=new Bridge();
         key=new KeyMapping("key.stevecount.settings",75,KeyMapping.Category.MISC);
+        emoteKey=new KeyMapping("key.stevecount.emotes",74,KeyMapping.Category.MISC);
         if(settings.autoConnect && !settings.username.isBlank()) bridge.control("connect",settings.username);
     }
     static void open() { var mc=Minecraft.getInstance();mc.gui.setScreen(new SettingsScreen(mc.gui.screen())); }
@@ -42,6 +44,7 @@ public final class SteveCount {
         if(Boolean.getBoolean("stevecount.followerSmoke")) FollowerSmokeHarness.tick();
         if(Boolean.getBoolean("stevecount.smoke")) SmokeHarness.tick();
         while(key.consumeClick()) open();
+        while(emoteKey.consumeClick())Minecraft.getInstance().gui.setScreen(new EmoteScreen(null));
         long now=System.currentTimeMillis();
         if(demo && automatic && now-lastDemo>2000) {lastDemo=now;changeDemo(demoCount+new Random().nextInt(-8,13));}
         var s=current();

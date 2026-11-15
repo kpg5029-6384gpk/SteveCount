@@ -15,6 +15,7 @@ public final class FabricEntrypoint implements ClientModInitializer {
     @Override public void onInitializeClient() {
         SteveCount.initialize(FabricLoader.getInstance().getConfigDir());
         KeyMappingHelper.registerKeyMapping(SteveCount.key);
+        KeyMappingHelper.registerKeyMapping(SteveCount.emoteKey);
         LevelExtractionEvents.END_EXTRACTION.register(context->FollowerCharacter.extract(context.levelState()));
         ClientTickEvents.END_CLIENT_TICK.register(mc->SteveCount.tick());
         ClientCommandRegistrationCallback.EVENT.register((dispatcher,registry)->dispatcher.register(ClientCommands.literal("stevecount").executes(c->{Minecraft.getInstance().schedule(SteveCount::open);return 1;})));

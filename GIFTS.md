@@ -12,7 +12,9 @@ A completed TikTok gift event named **Hand Heart** or **Hand Hearts**, reporting
 
 **This can kill the player in hardcore**, including ordinary consequences of knockback. There is no artificial minimum-health floor. Turn Gift damage off to disable the action.
 
-There is a **global five-second cooldown**. Gifts received during it are discarded, not queued. A completed streak triggers at most one punch regardless of its quantity. Duplicate events are ignored. Entering/re-entering a world, enabling damage, restarting/switching the companion, opening settings, pausing, death, demo mode and disconnects do not replay a backlog. Gameplay must be active for one second before new gifts can trigger damage.
+There is a **global five-second cooldown**. Gifts received during it are discarded. A completed streak triggers at most one punch regardless of its quantity. Duplicate events are ignored. Entering/re-entering a world, enabling damage, restarting/switching the companion, death, demo mode and disconnects do not replay old gifts. The connection/world must be ready for one second before new gifts can trigger damage.
+
+**Inventory and menus:** gifts now work while inventory, crafting, chat, SteveCount settings and other non-pausing screens are open. For a screen that genuinely pauses single-player, such as the Escape pause menu or its options screens, SteveCount retains **one** punch and applies it when play resumes. Multiple gifts while paused do not stack into a burst. The pending punch expires after 60 seconds and is cleared on disconnect, world change, death or disabling gift damage. Minecraft is never forcibly unpaused. The five-second actual-hit cooldown still applies after resuming.
 
 **Preview punch (no damage)** animates the buddy without TikTok and without damaging the player, even when real gift damage is enabled. Demo mode never causes gift damage. Preview does not send a fake gift or count it as a real TikTok statistic.
 

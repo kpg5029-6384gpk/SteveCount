@@ -12,20 +12,24 @@ import java.util.UUID;
 /** Explicit opt-in single-player gameplay action. Never sends attack packets to servers. */
 final class GiftPunch {
     static final GiftCursor cursor=new GiftCursor();
+    static final PendingPunch pending=new PendingPunch();
     static long animationStart;
     private static Object level;
     private static int readyTicks;
     static void tick() {
         var mc=Minecraft.getInstance();
-        if(level!=mc.level) {level=mc.level;readyTicks=0;animationStart=0;}
+        if(level!=mc.level) {level=mc.level;readyTicks=0;animationStart=0;pending.clear();}
         boolean eligible=mc.player!=null && mc.player.isAlive() && mc.getSingleplayerServer()!=null
-            && !mc.isPaused() && mc.gui.screen()==null && SteveCount.settings.giftPunch
+            && SteveCount.settings.giftPunch
             && SteveCount.settings.showCharacter() && !SteveCount.demo
             && SteveCount.bridge.snapshot.status().equals("Live");
         readyTicks=eligible?readyTicks+1:0;
-        boolean hit=cursor.accept(SteveCount.bridge.gifts,System.currentTimeMillis()/1000d,
+        String previousSession=cursor.session;
+        long now=System.currentTimeMillis();
+        boolean hit=cursor.accept(SteveCount.bridge.gifts,now/1000d,
             readyTicks>20 && SteveCount.bridge.snapshot.status().equals("Live"));
-        if(hit) punch();
+        if(!previousSession.equals(cursor.session))pending.clear();
+        if(pending.update(now,hit,eligible,mc.isPaused()))punch();
     }
     static void preview() {animationStart=System.currentTimeMillis();}
     static Vec3 strikePosition(Vec3 player,float yaw) {

@@ -20,6 +20,7 @@ public class Settings {
     public float characterScale = .55f, followDistance = 2.5f;
     public boolean characterLabel = true, characterGrounded = true;
     public volatile boolean giftPunch = false;
+    public boolean characterHeadRide = false;
     static Path configDirectory = Path.of("config");
     private static Path path() { return configDirectory.resolve("stevecount.json"); }
     public void validate() {
@@ -32,7 +33,7 @@ public class Settings {
         if (username == null) username="";
         if (milestones == null) milestones="";
         if (!java.util.List.of("HUD","Character","Both").contains(displayMode)) displayMode="HUD";
-        if (!java.util.List.of("Steve","Alex","Player").contains(characterSkin)) characterSkin="Steve";
+        if (!java.util.List.of("Steve","Alex","Player","Fiishy").contains(characterSkin)) characterSkin="Steve";
         characterScale=Float.isFinite(characterScale)?Math.clamp(characterScale,.25f,1f):.55f;
         followDistance=Float.isFinite(followDistance)?Math.clamp(followDistance,1.5f,6f):2.5f;
     }

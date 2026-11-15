@@ -47,11 +47,11 @@ public final class SettingsScreen extends Screen {
             row("Restore demo live",()->{if(!SteveCount.demo)SteveCount.demo(true);SteveCount.demoStatus="Demo Mode";},"Reset demo milestones",()->{SteveCount.reached.clear();SteveCount.demoPeak=SteveCount.demoCount;});
             button("Preview / move HUD",left,y,320,()->minecraft.gui.setScreen(new MoveScreen(this)));
         } else if(tab==3) {
-            row("Display: "+c.displayMode,()->{c.displayMode=next(c.displayMode,"HUD","Character","Both");FollowerCharacter.recall();refresh();},"Skin: "+c.characterSkin,()->{c.characterSkin=next(c.characterSkin,"Steve","Alex","Player");refresh();});
+            row("Display: "+c.displayMode,()->{c.displayMode=next(c.displayMode,"HUD","Character","Both");FollowerCharacter.recall();refresh();},"Skin: "+c.characterSkin,()->{c.characterSkin=next(c.characterSkin,"Steve","Alex","Player","Fiishy");refresh();});
             slider("Character size",.25,1,c.characterScale,v->c.characterScale=(float)v);
             slider("Follow distance",1.5,6,c.followDistance,v->c.followDistance=(float)v);
             row("Count label: "+c.characterLabel,()->{c.characterLabel=!c.characterLabel;refresh();},"Grounded: "+c.characterGrounded,()->{c.characterGrounded=!c.characterGrounded;refresh();});
-            row("Recall companion",FollowerCharacter::recall,"Reset character",()->{c.displayMode="HUD";c.characterSkin="Steve";c.characterScale=.55f;c.followDistance=2.5f;c.characterLabel=c.characterGrounded=true;FollowerCharacter.recall();refresh();});
+            row("Emotes / Head ride",()->minecraft.gui.setScreen(new EmoteScreen(this)),"Reset character",()->{c.displayMode="HUD";c.characterSkin="Steve";c.characterScale=.55f;c.followDistance=2.5f;c.characterLabel=c.characterGrounded=true;c.characterHeadRide=false;c.giftPunch=false;BuddyEmotes.stop();FollowerCharacter.recall();refresh();});
             row("Gift damage: "+c.giftPunch,()->{c.giftPunch=!c.giftPunch;c.save();refresh();},"Preview punch (no damage)",GiftPunch::preview);
         } else {
             row("Animations: "+c.animations,()->{c.animations=!c.animations;refresh();},"Milestone sound: "+c.sound,()->{c.sound=!c.sound;refresh();});

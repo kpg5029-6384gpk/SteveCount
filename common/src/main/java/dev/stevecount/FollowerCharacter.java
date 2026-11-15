@@ -23,16 +23,18 @@ final class FollowerCharacter {
     private static ClientLevel level;
     static int extractedFrames;
     static int extractionCallbacks;
+    static BuddyRenderState lastSmokeState;
     private static final PlayerSkin STEVE=skin("wide/steve",PlayerModelType.WIDE);
     private static final PlayerSkin ALEX=skin("slim/alex",PlayerModelType.SLIM);
+    private static final PlayerSkin FIISHY=new PlayerSkin(new ClientAsset.ResourceTexture(Identifier.fromNamespaceAndPath("stevecount","entity/fiishy")),null,null,PlayerModelType.WIDE,true);
     private static PlayerSkin skin(String path,PlayerModelType type) {
         return new PlayerSkin(new ClientAsset.ResourceTexture(Identifier.withDefaultNamespace("entity/player/"+path)),null,null,type,true);
     }
     static void recall() {trail.reset();}
     static void tick() {
         var mc=Minecraft.getInstance();var c=SteveCount.settings;
-        if(mc.level!=level) {trail.reset();level=mc.level;}
-        if(mc.player==null || level==null || !c.showCharacter() || !mc.player.isAlive()) {trail.reset();return;}
+        if(mc.level!=level) {trail.reset();level=mc.level;BuddyEmotes.stop();}
+        if(mc.player==null || level==null || !c.showCharacter() || !mc.player.isAlive()) {trail.reset();BuddyEmotes.stop();return;}
         if(mc.isPaused())return;
         Vec3 player=mc.player.position();
         Vec3 target=trail.target(player,mc.player.getYRot(),c.followDistance);
@@ -87,34 +89,44 @@ final class FollowerCharacter {
         var mc=Minecraft.getInstance();var c=SteveCount.settings;
         if(!c.showCharacter() || trail.position==null || level!=mc.level || mc.player==null || !mc.player.isAlive() || mc.gui.hud.isHidden())return;
         float partial=world.worldPartialTicks;
+        long now=System.currentTimeMillis();
         Vec3 pos=trail.interpolated(partial);
-        float punch=(System.currentTimeMillis()-GiftPunch.animationStart)/600f;
+        float punch=(now-GiftPunch.animationStart)/600f;
         boolean punching=c.animations && punch>=0 && punch<1;
+        boolean riding=c.characterHeadRide && !punching;
+        if(riding && mc.options.getCameraType().isFirstPerson())return;
+        float size=riding?.18f:c.characterScale;
+        String emote=punching?"None":BuddyEmotes.current(now);
+        if(riding)pos=mc.player.getPosition(partial).add(0,mc.player.getBbHeight()-.12,0);
+        if(emote.equals("Cheer") && !riding)pos=pos.add(0,Math.abs(Math.sin(BuddyEmotes.elapsed(now)*7))*.2,0);
         if(punching)pos=pos.lerp(GiftPunch.strikePosition(mc.player.position(),mc.player.getYRot()),Math.sin(punch*Math.PI));
-        AvatarRenderState state=new AvatarRenderState();
+        BuddyRenderState state=new BuddyRenderState();
+        state.emote=emote;state.emoteTime=BuddyEmotes.elapsed(now);state.headRide=riding;
         state.entityType=EntityTypes.PLAYER;
         state.x=pos.x;state.y=pos.y;state.z=pos.z;
-        state.scale=c.characterScale;
-        state.boundingBoxWidth=.6f*c.characterScale;
-        state.boundingBoxHeight=1.8f*c.characterScale;
-        state.eyeHeight=1.62f*c.characterScale;
+        state.scale=size;
+        state.boundingBoxWidth=.6f*size;
+        state.boundingBoxHeight=1.8f*size;
+        state.eyeHeight=1.62f*size;
         state.ageInTicks=c.animations?mc.player.tickCount+partial:0;
         state.bodyRot=trail.previousYaw+FollowTrail.wrap(trail.yaw-trail.previousYaw)*partial;
+        if(riding)state.bodyRot=mc.player.getYRot();
+        if(emote.equals("Dance"))state.bodyRot+=(float)Math.sin(state.emoteTime*5)*30;
         Vec3 toward=mc.player.getEyePosition().subtract(pos);
         float look=(float)Math.toDegrees(Math.atan2(-toward.x,toward.z));
-        state.yRot=Math.clamp(FollowTrail.wrap(look-state.bodyRot),-55,55);
+        state.yRot=riding?0:Math.clamp(FollowTrail.wrap(look-state.bodyRot),-55,55);
         state.walkAnimationPos=trail.walk;
-        state.walkAnimationSpeed=c.animations?trail.speed:0;
+        state.walkAnimationSpeed=c.animations && !riding?trail.speed:0;
         if(punching) {
             state.swingAnimation=punch;
             state.currentSwing=new net.minecraft.world.entity.LivingEntity.SwingDescription(net.minecraft.world.InteractionHand.MAIN_HAND,net.minecraft.world.item.component.SwingAnimation.DEFAULT,6);
         }
-        state.skin=switch(c.characterSkin) {case "Alex"->ALEX;case "Player"->mc.player.getSkin();default->STEVE;};
+        state.skin=switch(c.characterSkin) {case "Alex"->ALEX;case "Player"->mc.player.getSkin();case "Fiishy"->FIISHY;default->STEVE;};
         state.showCape=false;
         state.distanceToCameraSq=world.cameraRenderState.pos.distanceToSqr(pos);
         var lightPos=BlockPos.containing(pos.add(0,.7,0));
         state.lightCoords=LightCoordsUtil.pack(level.getBrightness(LightLayer.BLOCK,lightPos),level.getBrightness(LightLayer.SKY,lightPos));
-        if(c.characterLabel) {
+        if(c.characterLabel && !riding) {
             var snapshot=SteveCount.current();
             boolean stale=snapshot.stale() || !SteveCount.demo && System.currentTimeMillis()/1000d-snapshot.updated()>60;
             int color=SteveCount.demo?0x7FFFD4:stale?0xFFC267:0xFFFFFF;
@@ -123,6 +135,6 @@ final class FollowerCharacter {
             state.nameTagAttachment=new Vec3(0,state.boundingBoxHeight-.30,0);
         }
         world.entityRenderStates.add(state);
-        if(Boolean.getBoolean("stevecount.followerSmoke"))extractedFrames++;
+        if(Boolean.getBoolean("stevecount.followerSmoke")) {extractedFrames++;lastSmokeState=state;}
     }
 }

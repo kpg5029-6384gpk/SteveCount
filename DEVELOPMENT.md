@@ -32,7 +32,7 @@ The maintained Java candidate https://github.com/jwdeveloper/TikTokLiveJava was 
 
 `core.py` owns normalized input, validated counts, timestamps, session state and backoff. `service.py` adapts TikTokLive to that state. A future provider can populate the same snapshot without changing the renderer. `launcher.py` gives a visible start/status/exit window. Asyncio handles TikTok and the local aiohttp API; Tk runs on the main thread.
 
-The bridge uses one daemon background worker and one persistent Java HttpClient, polling the localhost status once per second with bounded timeouts. TikTok updates remain event driven. No external networking or disk reads occur in rendering. Immutable snapshots cross threads. Local token reads and JSON decoding occur on the worker. No mixins or modifications to vanilla HUD layers are used; SteveCount registers its own layer.
+The bridge uses one daemon background worker and one persistent Java HttpClient, polling the localhost status once per second with bounded timeouts. TikTok updates remain event driven. No external networking or disk reads occur in rendering. Immutable snapshots cross threads. Local token reads and JSON decoding occur on the worker. SteveCount registers its own HUD layer. A client-only HumanoidModel pose hook returns immediately unless the state is our detached BuddyRenderState; normal players and mobs retain vanilla poses.
 
 `Settings` stores only appearance and connection preferences; counts and demo statistics remain in memory. `HudLayout` computes resolution-independent clamped placement. Minecraft's own installed Steve/Alex skins are referenced; those assets are not redistributed. Player head mode uses the local player's already loaded skin, without separate skin HTTP calls.
 
@@ -58,3 +58,9 @@ Milestone visual feedback highlights the number briefly and shows a small HUD no
 `GiftCursor` baselines new sessions, consumes while disarmed, rejects stale events and enforces another client-side cooldown. `GiftPunch` requires active single-player gameplay, real LIVE state, enabled character/damage and no demo. It schedules vanilla Player.attack on the integrated server thread with an unregistered empty-handed survival Player, fully charged, grounded, not sprinting, no effects. Never writes target health in production. The explicit opt-in changes gameplay; visual-only claims apply with gift damage disabled.
 
 Use `-PstevecountPunchSmoke` with runClient to create an isolated disposable world, run the existing follower checks and then exercise synthetic-gift damage. QA-only health/equipment/world changes occur solely in that fresh test world.
+
+## Menus, emotes and bundled skin
+
+GiftPunch eligibility no longer requires a null screen. PendingPunch retains one accepted action during true pause, expires it after 60 seconds, clears it on lost eligibility and limits actual hit dispatch to five seconds. GiftCursor still provides strict session/sequence replay protection. Client ticks continue while Minecraft's integrated world is paused.
+
+BuddyEmotes owns bounded cosmetic emote lifetimes; settings store only skin and head-ride preference. BuddyRenderState tags the detached avatar. The isolated client-only BuddyPoseMixin adjusts limbs after HumanoidModel.setupAnim only for that marker. Standard model setup resets poses every frame. Head riding uses interpolated player position and bounding-box height, a fixed .18 scale and a seated pose; first-person hides it. Punch animation takes priority. The bundled PNG is a ResourceTexture with logical ID stevecount:entity/fiishy, resolved to textures/entity/fiishy.png.

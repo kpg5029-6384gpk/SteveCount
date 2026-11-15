@@ -18,7 +18,7 @@ public final class NeoForgeEntrypoint {
         SteveCount.initialize(FMLPaths.CONFIGDIR.get());
         NeoForge.EVENT_BUS.addListener((ExtractLevelRenderStateEvent e)->FollowerCharacter.extract(e.getRenderState()));
         container.registerExtensionPoint(IConfigScreenFactory.class,(mc,parent)->new SettingsScreen(parent));
-        bus.addListener((RegisterKeyMappingsEvent e)->e.register(SteveCount.key));
+        bus.addListener((RegisterKeyMappingsEvent e)->{e.register(SteveCount.key);e.register(SteveCount.emoteKey);});
         bus.addListener((RegisterGuiLayersEvent e)->e.registerAboveAll(Identifier.fromNamespaceAndPath("stevecount","hud"),(g,d)->{
             var mc=Minecraft.getInstance();
             if(SteveCount.settings.showHud() && mc.player!=null && !mc.gui.hud.isHidden() && !(mc.gui.screen() instanceof MoveScreen)) Hud.draw(g,false);

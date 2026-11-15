@@ -5,6 +5,7 @@
   "name": "SteveCount",
   "description": "Client-side TikTok LIVE viewer HUD with offline demo mode.",
   "environment": "client",
+  "mixins": ["stevecount.mixins.json"],
   "license": "MIT",
   "entrypoints": {"client": ["dev.stevecount.FabricEntrypoint"]},
   "depends": {

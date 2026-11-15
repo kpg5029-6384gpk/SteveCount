@@ -17,7 +17,7 @@ Only launch one companion per Windows user at a time. Restarting it rotates its 
 
 Windows organizational Application Control can block unsigned executables. This build is unsigned. The development environment blocked a diagnostic EXE; standalone execution has not been fully verified here. Do not disable security controls. Use an approved build/signing process on managed machines.
 
-To enable optional single-player Hand Heart damage, update both components and follow [GIFTS.md](GIFTS.md). It uses normal fist damage and can kill in hardcore. Off by default.
+To enable optional single-player Hand Heart damage, follow [GIFTS.md](GIFTS.md). It uses normal fist damage and can kill in hardcore. Off by default. The menu fix, Fiishy skin and emotes update only requires replacing the matching SteveCount JAR; the companion protocol is unchanged from the Hand Heart release. The installation ZIP includes the companion too. See [EMOTES.md](EMOTES.md) for the new buttons and J shortcut.
 
 To uninstall, close the companion and remove SteveCount's JAR and extracted folder. Its settings are in the instance's `config/stevecount.json`, and local companion files in `%LOCALAPPDATA%\SteveCount`. No entity or custom data is saved in worlds. Normal health/gameplay consequences of previously enabled gift punches remain.
 

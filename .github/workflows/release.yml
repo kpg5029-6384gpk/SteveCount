@@ -1,4 +1,4 @@
-name: Build and publish SteveCount Hand Heart punch
+name: Build and publish SteveCount menu fix and emotes
 on:
   workflow_dispatch:
   push:
@@ -107,17 +107,19 @@ jobs:
           GH_REPO: ${{ github.repository }}
         run: |
           @'
-          SteveCount Hand Heart punch release candidate for Minecraft 26.3 — Fabric and NeoForge.
+          SteveCount menu fix, Fiishy skin and emotes — Minecraft 26.3, Fabric + NeoForge.
 
-          Download SteveCount-Windows-Fabric.zip for Fabric Loader 0.20.1+ with Fabric API 0.166.2+26.3, or SteveCount-Windows-NeoForge.zip for NeoForge 26.3.0.102. Update BOTH the JAR and companion EXE. Install only one loader JAR.
+          Download SteveCount-Windows-Fabric.zip for Fabric Loader 0.20.1+ with Fabric API 0.166.2+26.3, or SteveCount-Windows-NeoForge.zip for NeoForge 26.3.0.102. Replace the old matching SteveCount JAR; install only one. The companion protocol is unchanged from the Hand Heart release; the ZIP includes the companion too.
 
-          NEW: optional 100-coin Hand Heart/Hand Hearts -> one normal unarmed buddy punch in single-player. Open K or /stevecount -> Character -> Display: Character/Both -> Gift damage: true -> Save & Done. Off by default. Unarmored damage is half a heart; ordinary armor, immunity, knockback and death rules apply. Can kill in hardcore. Five-second cooldown; skipped gifts never queue. Completed streaks cause at most one hit. Preview punch does no damage. See GIFTS.md.
+          FIX: Hand Heart punches now work in inventory and non-pausing menus. A truly paused single-player menu retains one punch, applying it on resume. Multiple paused gifts never stack; pending damage expires after 60 seconds and clears on disconnect/death/disable. Normal half-heart unarmored fist damage and the five-second cooldown are unchanged. Can kill in hardcore; opt-in single-player only.
 
-          Both loaders passed local disposable-world tests for the synthetic gift feed, half-heart unarmored damage, armor reduction, vanilla immunity, creative immunity and lethal damage. Companion event/filter/security tests and Java core checks passed. The Windows runner also verified packaged EXE startup/authenticated localhost and ZIP integrity.
+          NEW: K -> Character -> Skin: Fiishy selects the requested NameMC skin, bundled for offline use. Press J, or K -> Character -> Emotes / Head ride, for Wave, Dance, Cheer and Tiny head rider. Use F5 to see the tiny seated buddy; Return to ground restores normal size. Emotes are cosmetic, with in-game buttons only and no gift triggers. J is reassignable.
 
-          No actual paid TikTok gift or live stream end-to-end has been verified. Multiplayer gift damage is unsupported. This is an unsigned release candidate. See TEST-REPORT.md.
+          Both loaders passed local disposable-world inventory and true pause/resume damage checks, vanilla combat regressions, emote states and head-ride checks. 125 Java core assertions per loader and companion tests passed. GitHub also verified standalone EXE startup, authenticated localhost and loader-specific ZIP integrity. See EMOTES.md, GIFTS.md, SKIN-NOTICE.md and TEST-REPORT.md.
+
+          No developer-run real paid TikTok gift test for these new scenarios. Multiplayer gift damage is unsupported. Unsigned release candidate.
           '@ | Set-Content release-notes.md
-          $tag = 'v1.0.0-rc.5-build-' + $env:GITHUB_RUN_NUMBER
-          gh release create $tag dist/SteveCount-Windows-Fabric.zip dist/SteveCount-Windows-NeoForge.zip dist/SteveCount-26.3-Fabric.jar dist/SteveCount-Windows.zip dist/SteveCount-26.3-NeoForge.jar dist/SteveCount-Companion.exe dist/SteveCount-Source.zip dist/SHA256SUMS.txt --target $env:GITHUB_SHA --title "SteveCount Hand Heart Punch — Fabric + NeoForge" --notes-file release-notes.md --prerelease
+          $tag = 'v1.0.0-rc.6-build-' + $env:GITHUB_RUN_NUMBER
+          gh release create $tag dist/SteveCount-Windows-Fabric.zip dist/SteveCount-Windows-NeoForge.zip dist/SteveCount-26.3-Fabric.jar dist/SteveCount-Windows.zip dist/SteveCount-26.3-NeoForge.jar dist/SteveCount-Companion.exe dist/SteveCount-Source.zip dist/SHA256SUMS.txt --target $env:GITHUB_SHA --title "SteveCount Menu Fix + Fiishy Skin + Emotes" --notes-file release-notes.md --prerelease
           if ($LASTEXITCODE -ne 0) { throw 'Release publication failed' }
 
