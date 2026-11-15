@@ -1,6 +1,8 @@
 # SteveCount
 
-**Menu fix, Fiishy skin and emotes:** gift punches now work in inventory/non-pausing menus; true pause retains one expiring punch for resume. Select **K → Character → Skin: Fiishy** for the linked skin. Press **J**, or choose **Emotes / Head ride**, for Wave, Dance, Cheer and the tiny head rider. See [EMOTES.md](EMOTES.md).
+**Rounded astronaut and random personality:** choose **K → Character → Buddy: Astronaut** for the new non-blocky model. **J → Personality / sounds** controls random Wave/Dance/Cheer, quiet robot noises, Calm/Playful timing and volume. These are cosmetic and work offline. See [ASTRONAUT.md](ASTRONAUT.md).
+
+**Menu fix, Fiishy skin and emotes:** gift punches now work in inventory/non-pausing menus; true pause retains one expiring punch for resume. Select **K → Character → Buddy: Fiishy** for the linked skin. Press **J**, or choose **Emotes / Head ride**, for Wave, Dance, Cheer and the tiny head rider. See [EMOTES.md](EMOTES.md).
 
 **Optional 100-coin Hand Heart punch:** in single-player, enable **Character → Gift damage** to have the buddy perform one ordinary fist attack per accepted gift. Unarmored damage is half a heart; vanilla armor and immunity apply. Five-second cooldown, no queued hits, off by default. Can kill in hardcore. Update both the JAR and EXE. See [GIFTS.md](GIFTS.md).
 

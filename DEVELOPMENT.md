@@ -64,3 +64,11 @@ Use `-PstevecountPunchSmoke` with runClient to create an isolated disposable wor
 GiftPunch eligibility no longer requires a null screen. PendingPunch retains one accepted action during true pause, expires it after 60 seconds, clears it on lost eligibility and limits actual hit dispatch to five seconds. GiftCursor still provides strict session/sequence replay protection. Client ticks continue while Minecraft's integrated world is paused.
 
 BuddyEmotes owns bounded cosmetic emote lifetimes; settings store only skin and head-ride preference. BuddyRenderState tags the detached avatar. The isolated client-only BuddyPoseMixin adjusts limbs after HumanoidModel.setupAnim only for that marker. Standard model setup resets poses every frame. Head riding uses interpolated player position and bounding-box height, a fixed .18 scale and a seated pose; first-person hides it. Punch animation takes priority. The bundled PNG is a ResourceTexture with logical ID stevecount:entity/fiishy, resolved to textures/entity/fiishy.png.
+
+## Rounded astronaut and personality
+
+AstronautModel owns immutable ellipsoid vertex arrays with smooth normals and six articulated ModelParts. A narrowly marker-gated ModifyArgs hook substitutes this model only when a submitted BuddyRenderState has astronaut=true; ordinary entity models and previous buddies are untouched. Native transforms, vertex lighting, overlay and viewer name tag submission are preserved. The custom model suppresses vanilla clothing/equipment layers; it is still a detached client render state, not an entity.
+
+BuddySchedule is a pure seeded-testable scheduler. Timers reset on ineligibility, world changes, mute/disable and activity-mode changes. Busy manual emotes/punches defer the next opportunity rather than queueing catch-up actions. BuddyPersonality runs only client-side and dispatches bounded automatic Wave/Dance/Cheer or local one-shot sounds. It never invokes gift controls or damage.
+
+Three original synthesized Oggs and the model's white vertex-color texture are committed. To regenerate them, run scripts/generate-buddy-assets.py with ffmpeg on PATH or imageio-ffmpeg installed in a developer Python environment. This is not needed to build or install the mod. Sounds use the Friendly Creatures category, local attenuation and the separate buddy volume. No new runtime dependency is introduced.

@@ -28,6 +28,7 @@ final class FollowerSmokeHarness {
         worldTicks++;
         if(worldTicks==20)teleport(0.5,0.5);
         if(worldTicks==60) {
+            SteveCount.settings.randomEmotes=SteveCount.settings.buddyNoises=false;BuddyPersonality.rest();
             mc.gui.setScreen(null);SteveCount.demo=true;SteveCount.demoStatus="Demo Mode";SteveCount.demoCount=128;
             SteveCount.settings.displayMode="Both";SteveCount.settings.characterSkin="Steve";
             mc.options.setCameraType(CameraType.FIRST_PERSON);mc.player.setYRot(0);mc.player.setXRot(20);FollowerCharacter.recall();

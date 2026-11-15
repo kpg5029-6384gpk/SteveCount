@@ -47,7 +47,7 @@ public final class SettingsScreen extends Screen {
             row("Restore demo live",()->{if(!SteveCount.demo)SteveCount.demo(true);SteveCount.demoStatus="Demo Mode";},"Reset demo milestones",()->{SteveCount.reached.clear();SteveCount.demoPeak=SteveCount.demoCount;});
             button("Preview / move HUD",left,y,320,()->minecraft.gui.setScreen(new MoveScreen(this)));
         } else if(tab==3) {
-            row("Display: "+c.displayMode,()->{c.displayMode=next(c.displayMode,"HUD","Character","Both");FollowerCharacter.recall();refresh();},"Skin: "+c.characterSkin,()->{c.characterSkin=next(c.characterSkin,"Steve","Alex","Player","Fiishy");refresh();});
+            row("Display: "+c.displayMode,()->{c.displayMode=next(c.displayMode,"HUD","Character","Both");FollowerCharacter.recall();refresh();},"Buddy: "+c.characterSkin,()->{c.characterSkin=next(c.characterSkin,"Steve","Alex","Player","Fiishy","Astronaut");refresh();});
             slider("Character size",.25,1,c.characterScale,v->c.characterScale=(float)v);
             slider("Follow distance",1.5,6,c.followDistance,v->c.followDistance=(float)v);
             row("Count label: "+c.characterLabel,()->{c.characterLabel=!c.characterLabel;refresh();},"Grounded: "+c.characterGrounded,()->{c.characterGrounded=!c.characterGrounded;refresh();});

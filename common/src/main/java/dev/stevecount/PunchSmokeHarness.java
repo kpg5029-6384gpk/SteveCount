@@ -74,13 +74,45 @@ final class PunchSmokeHarness {
         if(tick==980) {check(FollowerCharacter.lastSmokeState.headRide,"Head ride works with animations off");SteveCount.settings.animations=true;SteveCount.settings.characterHeadRide=false;mc.gui.setScreen(new EmoteScreen(null));}
         if(tick==1000)capture("emote-menu");
         if(tick==1020)mc.gui.setScreen(null);
-        if(tick==1100)server.execute(()->{
+        if(tick==1040) {
+            SteveCount.settings.characterSkin="Astronaut";mc.options.setCameraType(net.minecraft.client.CameraType.FIRST_PERSON);
+            var d=FollowerCharacter.trail.position.add(0,1.1,0).subtract(mc.player.getEyePosition());
+            mc.player.setYRot((float)Math.toDegrees(Math.atan2(-d.x,d.z)));
+            mc.player.setXRot((float)-Math.toDegrees(Math.atan2(d.y,Math.sqrt(d.x*d.x+d.z*d.z))));
+            BuddyEmotes.play("Wave");
+        }
+        if(tick==1070) {
+            check(FollowerCharacter.lastSmokeState.astronaut && AstronautModel.compiledMeshes>10,"Custom rounded astronaut mesh actually rendered");capture("astronaut-wave");
+        }
+        if(tick==1075)GiftPunch.preview();
+        if(tick==1080)capture("astronaut-punch-preview");
+        if(tick==1090)BuddyEmotes.play("Dance");
+        if(tick==1110)capture("astronaut-dance");
+        if(tick==1130)BuddyEmotes.play("Cheer");
+        if(tick==1150)capture("astronaut-cheer");
+        if(tick==1170) {BuddyEmotes.stop();SteveCount.settings.characterHeadRide=true;mc.options.setCameraType(net.minecraft.client.CameraType.THIRD_PERSON_FRONT);mc.player.setXRot(0);}
+        if(tick==1190) {check(FollowerCharacter.lastSmokeState.astronaut && FollowerCharacter.lastSmokeState.headRide,"Astronaut head ride");capture("astronaut-head-ride");}
+        if(tick==1210) {
+            for(String tone:new String[]{"chirp","boop","wobble"})check(mc.getSoundManager().getSoundEvent(net.minecraft.resources.Identifier.fromNamespaceAndPath("stevecount","buddy."+tone))!=null,"Sound event loaded: "+tone);
+            SteveCount.settings.characterHeadRide=false;SteveCount.settings.randomEmotes=SteveCount.settings.buddyNoises=true;
+            SteveCount.settings.buddyVolume=.2f;SteveCount.settings.buddyActivity="Calm";
+            BuddyEmotes.stop();BuddyPersonality.schedule.nextEmote=BuddyPersonality.schedule.nextNoise=System.currentTimeMillis()-1;
+        }
+        if(tick==1220) {
+            check(BuddyPersonality.randomEmotesPlayed==1 && BuddyPersonality.noisesPlayed==1,"Automatic emote and one-shot sound dispatched");
+            check(!SteveCount.settings.giftPunch,"Random activity never enables gift damage");
+            SteveCount.settings.randomEmotes=SteveCount.settings.buddyNoises=false;BuddyPersonality.rest();
+        }
+        if(tick==1240)mc.gui.setScreen(new PersonalityScreen(null));
+        if(tick==1255)capture("personality-menu");
+        if(tick==1270) {check(BuddyPersonality.randomEmotesPlayed==1 && BuddyPersonality.noisesPlayed==1,"Disabled random activity stays off");mc.gui.setScreen(null);}
+        if(tick==1310)server.execute(()->{
             var p=server.getPlayerList().getPlayer(id);p.setHealth(.5f);
             GiftPunch.attack(p,p.position().add(0,0,1));check(!p.isAlive(),"No artificial half-heart survival floor");
-            LogUtils.getLogger().info("SteveCount menu/emote world QA PASSED: inventory gift damage, true pause/resume, vanilla fist/armor/immunity/lethal damage, Fiishy skin, Wave/Dance/Cheer, tiny head ride, animation toggle. Synthetic events only.");
+            LogUtils.getLogger().info("SteveCount astronaut world QA PASSED: rounded mesh rendering, emotes, head ride, random activity/sound dispatch and disabling, inventory/pause gift regression, vanilla combat. Synthetic events only.");
             mc.execute(mc::stop);
         });
-        if(tick>1200)throw new AssertionError("Punch QA timed out");
+        if(tick>1400)throw new AssertionError("Punch QA timed out");
     }
     private static void gift(int sequence) {
         var feed=new com.google.gson.JsonObject();feed.addProperty("session","qa");feed.addProperty("sequence",sequence);

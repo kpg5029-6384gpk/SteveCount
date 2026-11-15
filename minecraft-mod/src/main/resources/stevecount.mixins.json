@@ -3,6 +3,6 @@
   "minVersion": "0.8",
   "package": "dev.stevecount.mixin",
   "compatibilityLevel": "JAVA_25",
-  "client": ["BuddyPoseMixin"],
+  "client": ["BuddyPoseMixin", "AstronautModelMixin"],
   "injectors": {"defaultRequire": 1}
 }

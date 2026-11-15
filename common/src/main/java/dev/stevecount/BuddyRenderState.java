@@ -7,4 +7,5 @@ public final class BuddyRenderState extends AvatarRenderState {
     public String emote="None";
     public float emoteTime;
     public boolean headRide;
+    public boolean astronaut;
 }

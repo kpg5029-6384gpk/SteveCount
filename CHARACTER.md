@@ -8,7 +8,7 @@ SteveCount can show its count as a miniature character that follows your player,
 2. Press **K** or enter **/stevecount**.
 3. Open **Character**.
 4. Click **Display** to cycle **HUD → Character → Both**.
-5. Choose **Steve**, **Alex**, **Player** (your already-loaded player skin), or **Fiishy** (the user-selected NameMC skin).
+5. Use **Buddy** to choose **Steve**, **Alex**, **Player** (your already-loaded player skin), **Fiishy** (the user-selected NameMC skin), or **Astronaut** (the rounded custom model).
 6. Adjust **Character size** and **Follow distance**. Turn the count label or grounded movement on/off as desired.
 7. Click **Save & Done**. These options persist in `config/stevecount.json`.
 

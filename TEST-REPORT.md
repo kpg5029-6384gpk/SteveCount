@@ -1,5 +1,14 @@
 # SteveCount verification report — 2026-11-12
 
+## Rounded astronaut and random personality — 2026-11-15
+
+- Fabric and NeoForge rendered the rounded custom mesh in real disposable development worlds and passed the extended astronaut/emote/head-ride/automatic activity checks. Native mesh compilation was asserted, and representative wave, dance, cheer, punch-preview, head-ride and personality-menu captures were visually inspected. Inventory and true pause/resume gift tests and normal combat regressions remain passing with synthetic events.
+- The core suite now has **140 assertions** per loader: bounded Calm/Playful intervals, no per-frame/catch-up repetition, busy/manual/punch protection, pause/disable reset, animations-off behavior, smooth finite mesh normals, bundled sound format, invalid preferences and personality persistence, plus earlier checks. All **36 companion tests** pass locally; the protocol is unchanged.
+- All three original Ogg sounds decoded successfully with ffmpeg, with durations about .30/.44/.62 seconds and peaks below half the available sample range. Sound-event loading and one-shot API dispatch were checked in Minecraft. Physical speaker output was not independently audited. The first preliminary run began before generated sound files were copied into the runtime resources and logged an empty sound; the rebuilt final run includes all Oggs and has no such warning.
+- A new persistence test initially mutated the settings object still used by another assertion; the test fixture was corrected. Final builds/core checks pass.
+- The model and synthetic sounds are original project assets inspired by the supplied illustration; the reference image is not redistributed. Existing Minecraft-avatar options remain supported. No extra client mod dependency or companion changes are required.
+- Real paid TikTok gifts, multiplayer/shader interoperability and FPS profiling are not newly verified. These cosmetic actions never call the gift-damage path. Existing gift acceptance remains restricted to the configured Hand Heart names/value.
+
 ## Menu fix, Fiishy skin and emotes — 2026-11-15
 
 - Both Fabric and NeoForge passed the extended in-world smoke test in separate new disposable QA worlds. A synthetic gift received with the actual inventory screen open removed exactly 1 HP without closing the inventory. A gift received during a real Escape pause was retained without damage, then removed exactly 1 HP after resume. Existing armor, immunity, creative and lethal damage checks still passed.

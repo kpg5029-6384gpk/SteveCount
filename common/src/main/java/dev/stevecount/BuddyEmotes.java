@@ -4,6 +4,7 @@ package dev.stevecount;
 public final class BuddyEmotes {
     private static String active="None";
     private static long started;
+    private static boolean automatic;
     static String current(long now) {
         if(!SteveCount.settings.animations || now-started>=duration(active))return "None";
         return active;
@@ -14,7 +15,10 @@ public final class BuddyEmotes {
         SteveCount.settings.animations=true;
         if(!SteveCount.settings.showCharacter())SteveCount.settings.displayMode="Both";
         active=name;started=System.currentTimeMillis();
+        automatic=false;
     }
+    static void playAutomatically(String name,long now) {if(duration(name)>0){active=name;started=now;automatic=true;}}
+    static void stopAutomatic() {if(automatic)stop();}
     static float elapsed(long now) {return (now-started)/1000f;}
-    static void stop() {active="None";}
+    static void stop() {active="None";automatic=false;}
 }

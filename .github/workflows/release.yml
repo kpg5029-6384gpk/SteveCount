@@ -1,4 +1,4 @@
-name: Build and publish SteveCount menu fix and emotes
+name: Build and publish SteveCount astronaut buddy
 on:
   workflow_dispatch:
   push:
@@ -107,19 +107,19 @@ jobs:
           GH_REPO: ${{ github.repository }}
         run: |
           @'
-          SteveCount menu fix, Fiishy skin and emotes — Minecraft 26.3, Fabric + NeoForge.
+          SteveCount rounded astronaut buddy + random personality — Minecraft 26.3, Fabric + NeoForge.
 
-          Download SteveCount-Windows-Fabric.zip for Fabric Loader 0.20.1+ with Fabric API 0.166.2+26.3, or SteveCount-Windows-NeoForge.zip for NeoForge 26.3.0.102. Replace the old matching SteveCount JAR; install only one. The companion protocol is unchanged from the Hand Heart release; the ZIP includes the companion too.
+          Download SteveCount-Windows-Fabric.zip for Fabric Loader 0.20.1+ with Fabric API 0.166.2+26.3, or SteveCount-Windows-NeoForge.zip for NeoForge 26.3.0.102. Replace your old matching SteveCount JAR; install only one. The existing companion is compatible and is also included in the ZIP.
 
-          FIX: Hand Heart punches now work in inventory and non-pausing menus. A truly paused single-player menu retains one punch, applying it on resume. Multiple paused gifts never stack; pending damage expires after 60 seconds and clears on disconnect/death/disable. Normal half-heart unarmored fist damage and the five-second cooldown are unchanged. Can kill in hardcore; opt-in single-player only.
+          NEW: K -> Character -> Buddy: Astronaut selects an original rounded 3D astronaut with a glossy dark visor, hoodie, blue trousers, gloves and sneakers. Supports the existing viewer label, follow movement, emotes, gift-punch animation and tiny head ride. Steve/Alex/Player/Fiishy options remain available.
 
-          NEW: K -> Character -> Skin: Fiishy selects the requested NameMC skin, bundled for offline use. Press J, or K -> Character -> Emotes / Head ride, for Wave, Dance, Cheer and Tiny head rider. Use F5 to see the tiny seated buddy; Return to ground restores normal size. Emotes are cosmetic, with in-game buttons only and no gift triggers. J is reassignable.
+          NEW: J -> Personality / sounds controls optional random Wave/Dance/Cheer, quiet original robot-like chirps/boops/warbles, Calm/Playful timing and a separate volume slider. Calm is the default, at 20% volume. Random actions are cosmetic only: they never enable or trigger damage and never send fake gifts. Busy manual emotes and punches take priority; pauses/hiding reset the timers. Head riding remains a manual toggle. See ASTRONAUT.md.
 
-          Both loaders passed local disposable-world inventory and true pause/resume damage checks, vanilla combat regressions, emote states and head-ride checks. 125 Java core assertions per loader and companion tests passed. GitHub also verified standalone EXE startup, authenticated localhost and loader-specific ZIP integrity. See EMOTES.md, GIFTS.md, SKIN-NOTICE.md and TEST-REPORT.md.
+          Both loaders passed local disposable-world rounded-mesh, emote, head-ride, automatic action/sound-dispatch and disable checks, plus menu/punch regressions. 140 Java core assertions per loader, companion tests, packaged Windows EXE startup/authenticated localhost and ZIP integrity checks passed. Sound assets were independently decoded. No extra runtime mod dependency.
 
-          No developer-run real paid TikTok gift test for these new scenarios. Multiplayer gift damage is unsupported. Unsigned release candidate.
+          No new real paid TikTok gift verification, multiplayer/shader interoperability testing or FPS profiling. Unsigned release candidate. See TEST-REPORT.md.
           '@ | Set-Content release-notes.md
-          $tag = 'v1.0.0-rc.6-build-' + $env:GITHUB_RUN_NUMBER
-          gh release create $tag dist/SteveCount-Windows-Fabric.zip dist/SteveCount-Windows-NeoForge.zip dist/SteveCount-26.3-Fabric.jar dist/SteveCount-Windows.zip dist/SteveCount-26.3-NeoForge.jar dist/SteveCount-Companion.exe dist/SteveCount-Source.zip dist/SHA256SUMS.txt --target $env:GITHUB_SHA --title "SteveCount Menu Fix + Fiishy Skin + Emotes" --notes-file release-notes.md --prerelease
+          $tag = 'v1.0.0-rc.7-build-' + $env:GITHUB_RUN_NUMBER
+          gh release create $tag dist/SteveCount-Windows-Fabric.zip dist/SteveCount-Windows-NeoForge.zip dist/SteveCount-26.3-Fabric.jar dist/SteveCount-Windows.zip dist/SteveCount-26.3-NeoForge.jar dist/SteveCount-Companion.exe dist/SteveCount-Source.zip dist/SHA256SUMS.txt --target $env:GITHUB_SHA --title "SteveCount Rounded Astronaut + Random Emotes and Sounds" --notes-file release-notes.md --prerelease
           if ($LASTEXITCODE -ne 0) { throw 'Release publication failed' }
 

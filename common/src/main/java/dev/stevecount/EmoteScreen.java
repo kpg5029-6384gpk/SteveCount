@@ -20,8 +20,9 @@ public final class EmoteScreen extends Screen {
             if(c.characterHeadRide && !c.showCharacter())c.displayMode="Both";
             c.save();rebuildWidgets();
         });
-        button("Stop emote / Return to ground",136,()->{BuddyEmotes.stop();SteveCount.settings.characterHeadRide=false;SteveCount.settings.save();rebuildWidgets();});
-        button("Recall buddy",160,FollowerCharacter::recall);
+        button("Stop emote / Return to ground",136,()->{BuddyEmotes.stop();BuddyPersonality.rest();SteveCount.settings.characterHeadRide=false;SteveCount.settings.save();rebuildWidgets();});
+        addRenderableWidget(Button.builder(Component.literal("Personality / sounds"),b->minecraft.gui.setScreen(new PersonalityScreen(this))).bounds((width-300)/2,160,194,20).build());
+        addRenderableWidget(Button.builder(Component.literal("Recall"),b->FollowerCharacter.recall()).bounds((width-300)/2+202,160,98,20).build());
         button("Done",height-26,this::onClose);
     }
     private void play(String name) {BuddyEmotes.play(name);SteveCount.settings.save();minecraft.gui.setScreen(parent);}

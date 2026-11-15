@@ -1,0 +1,5 @@
+{
+  "buddy.chirp": {"subtitle":"subtitles.stevecount.buddy", "sounds":["stevecount:buddy/chirp"]},
+  "buddy.boop": {"subtitle":"subtitles.stevecount.buddy", "sounds":["stevecount:buddy/boop"]},
+  "buddy.wobble": {"subtitle":"subtitles.stevecount.buddy", "sounds":["stevecount:buddy/wobble"]}
+}

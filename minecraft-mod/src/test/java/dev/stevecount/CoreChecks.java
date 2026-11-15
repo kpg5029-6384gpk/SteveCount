@@ -7,6 +7,34 @@ public final class CoreChecks {
     static int checks;
     static void check(boolean ok,String message) {checks++;if(!ok)throw new AssertionError(message);}
     public static void main(String[] args) throws Exception {
+        var schedule=new BuddySchedule(new java.util.Random(42));
+        check(schedule.tick(1000,true,true,true,true,false,false)==0,"Random activity starts with a delay");
+        check(schedule.nextEmote>=36000 && schedule.nextEmote<=76000 && schedule.nextNoise>=51000 && schedule.nextNoise<=101000,"Calm random intervals bounded");
+        long emoteDue=schedule.nextEmote;schedule.nextNoise=Long.MAX_VALUE;
+        check(schedule.tick(emoteDue,true,true,true,true,false,false)==1,"Random emote becomes due");
+        check(schedule.tick(emoteDue+1,true,true,true,true,false,false)==0,"No per-frame emote repetition");
+        schedule.nextEmote=emoteDue;schedule.nextNoise=emoteDue;
+        check(schedule.tick(emoteDue+2,true,true,true,true,true,false)==0,"Manual emotes and punches are never interrupted");
+        check(schedule.tick(emoteDue+3,false,true,true,true,false,false)==0 && schedule.nextEmote==0 && schedule.nextNoise==0,"Pause and hidden buddy reset random timers");
+        check(schedule.tick(200000,true,false,false,true,false,false)==0 && schedule.nextEmote==0 && schedule.nextNoise==0,"Disabled activity stays off");
+        schedule.tick(200001,true,true,true,false,false,false);
+        check(schedule.nextEmote==0 && schedule.nextNoise>200001,"Animations off does not enable random emotes");
+        schedule.tick(200002,true,true,true,true,false,true);
+        check(schedule.nextEmote>=220002 && schedule.nextEmote<=245002,"Playful mode uses bounded faster interval");
+        var rounded=new AstronautModel.RoundMesh(0,0,0,2,3,4,0xFFFFFFFF,16,10);
+        var invalidPersonality=new Settings();invalidPersonality.buddyVolume=Float.NaN;invalidPersonality.buddyActivity="invalid";invalidPersonality.validate();
+        check(invalidPersonality.buddyVolume==.2f && invalidPersonality.buddyActivity.equals("Calm"),"Invalid personality values recover safely");
+        boolean normals=true,curved=false;
+        for(int i=0;i<rounded.vertices.length;i+=6) {
+            float x=rounded.vertices[i],y=rounded.vertices[i+1],z=rounded.vertices[i+2];
+            float nx=rounded.vertices[i+3],ny=rounded.vertices[i+4],nz=rounded.vertices[i+5];
+            normals &= Float.isFinite(x+y+z+nx+ny+nz) && Math.abs(nx*nx+ny*ny+nz*nz-1)<.001;
+            if(Math.abs(x)>.02 && Math.abs(y)>.02 && Math.abs(z)>.02)curved=true;
+        }
+        check(rounded.vertices.length==16*10*4*6 && normals && curved,"Rounded mesh has finite smooth normals and curved surfaces");
+        for(String tone:new String[]{"chirp","boop","wobble"})try(var sound=CoreChecks.class.getResourceAsStream("/assets/stevecount/sounds/buddy/"+tone+".ogg")) {
+            check(sound!=null && java.util.Arrays.equals(sound.readNBytes(4),new byte[]{'O','g','g','S'}),"Bundled Ogg sound: "+tone);
+        }
         var pending=new PendingPunch();
         check(pending.update(10000,true,true,false),"Unpaused menus accept punches immediately");
         check(!pending.update(11000,true,true,false),"Actual strikes respect cooldown");
@@ -63,6 +91,9 @@ public final class CoreChecks {
             config.displayMode="Both";config.characterSkin="Fiishy";config.characterHeadRide=true;config.characterScale=.4f;config.followDistance=4;config.giftPunch=true;
             config.save();
             var saved=Settings.load();
+            var personality=Settings.load();personality.characterSkin="Astronaut";personality.randomEmotes=false;personality.buddyNoises=false;personality.buddyVolume=.17f;personality.buddyActivity="Playful";personality.save();
+            var reread=Settings.load();
+            check(reread.characterSkin.equals("Astronaut") && !reread.randomEmotes && !reread.buddyNoises && reread.buddyVolume==.17f && reread.buddyActivity.equals("Playful"),"Astronaut and personality preferences persist");
             check(saved.giftPunch,"Gift damage opt-in persists");
             check(!new Settings().giftPunch,"Gift damage defaults off");
             check(saved.username.equals("example") && saved.scale==2 && saved.x==.75f,"Actual Settings.save/load persistence");

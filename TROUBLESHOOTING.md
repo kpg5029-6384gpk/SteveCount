@@ -23,3 +23,11 @@
 - **Invalid URL:** use `@username` or `https://www.tiktok.com/@username/live`. Short share links, video links, non-TikTok hosts, and HTTP URLs are rejected.
 
 TikTokLive is unofficial. Platform changes can require an updated companion. Never send passwords, cookies, session files, or the local token to troubleshoot this application.
+
+## Astronaut / random activity
+
+If the character is still blocky, select K → Character → Buddy: Astronaut and Display: Character/Both. Replacing the JAR does not overwrite your existing buddy choice. Remove the old SteveCount JAR so only one copy is installed.
+
+Random emotes/noises start after a delay, not immediately. Calm emotes wait 35–75 seconds and noises wait 50–100 seconds. Join a world, enable a visible character, keep the HUD shown and exit true pause. Use J → Personality / sounds to check toggles, activity and buddy volume. The global Animations toggle disables automatic emotes. Test a sound with Preview one sound, and check Minecraft Master/Friendly Creatures sliders if silent. Volume zero is always silent.
+
+Head riding is a manual toggle. It is hidden in first person; use F5. All automatic activity is cosmetic; random noises/emotes never trigger gift punches.
