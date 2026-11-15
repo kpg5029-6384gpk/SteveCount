@@ -15,9 +15,18 @@ Supported phrases (put “little buddy” before OR after):
 | --- | --- |
 | hop on / hop on my head / get on my head / head ride | Tiny head rider on |
 | hop off / get off / get off my head / come down | Return to ground |
-| dance / wave / cheer | Play existing cosmetic emote |
+| dance | Random Ground Spin, Robot Dance, Matrix Dodge, Thriller or Side Step Shuffle from Player Emotes |
+| wave | Player Emotes Wave |
+| how you feeling / how are you feeling / how do you feel | Random compatible Player Emotes solo |
+| cheer | Built-in Cheer |
 | stop / stop dancing | Stop emote |
 | come here / recall | Return to ground and recall buddy |
+
+Install optional **Player Emotes 2.0.3 for Minecraft 26.3**, matching your loader,
+for the library animations above. Consecutive random choices avoid the same emote
+when another is available. Say “stop little buddy” to end loops. If the library is
+missing or unavailable, Dance/Wave use their built-in versions and Feeling uses
+built-in Cheer. Buttons for the existing built-in emotes remain unchanged.
 
 This is a limited English command recognizer, not conversation or a speaker identity system.
 The name and command must occur in the SAME utterance. Bare “dance” is ignored.

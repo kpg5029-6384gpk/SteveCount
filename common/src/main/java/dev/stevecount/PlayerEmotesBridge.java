@@ -55,6 +55,25 @@ public final class PlayerEmotesBridge {
             return List.copyOf(result);
         }catch(ReflectiveOperationException | LinkageError | RuntimeException e) {fail(e);return List.of();}
     }
+    static final Set<String> VOICE_DANCES=Set.of("playeremotes:ground_spin","playeremotes:robot_dance","playeremotes:matrix_dodge","playeremotes:thriller","playeremotes:side_step_shuffle");
+    private static String lastVoice="";
+    static Choice voiceChoice(List<Choice> catalog,String action,java.util.random.RandomGenerator random) {
+        var candidates=catalog.stream().filter(c->switch(action) {
+            case "Dance" -> VOICE_DANCES.contains(c.id());
+            case "Wave" -> c.id().equals("playeremotes:wave");
+            case "Feeling" -> true;
+            default -> false;
+        }).toList();
+        if(candidates.isEmpty())return null;
+        var different=candidates.stream().filter(c->!c.id().equals(lastVoice)).toList();
+        if(!different.isEmpty())candidates=different;
+        Choice choice=candidates.get(random.nextInt(candidates.size()));lastVoice=choice.id();return choice;
+    }
+    static void voice(String action) {
+        Choice choice=voiceChoice(choices(),action,java.util.concurrent.ThreadLocalRandom.current());
+        if(choice!=null)BuddyEmotes.play(choice);
+        else BuddyEmotes.play(action.equals("Feeling")?"Cheer":action);
+    }
     static void select(Choice choice) {active=choice;}
     static void stop() {active=null;}
     static int duration(String id) {

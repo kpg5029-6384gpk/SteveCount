@@ -82,7 +82,7 @@ def main():
     tk.Button(row, text='Start voice', command=lambda: service.voice.start(devices[max(0,microphone.current())][0]) if devices else refresh_devices()).pack(side='left', padx=4)
     tk.Button(row, text='Stop / mute voice', command=service.voice.stop).pack(side='left', padx=4)
     tk.Button(row, text='Refresh microphones', command=refresh_devices).pack(side='left', padx=4)
-    tk.Label(root, text='Say “little buddy hop on”, “hop off little buddy”, or “dance little buddy”.\nAudio stays on this PC. Nothing is recorded or uploaded.', wraplength=490).pack(pady=8)
+    tk.Label(root, text='Say “little buddy hop on”, “hop off little buddy”, “dance little buddy”, or “how you feeling little buddy?”.\nAudio stays on this PC. Nothing is recorded or uploaded.', wraplength=490).pack(pady=8)
     def refresh_voice():
         state = service.voice.snapshot()
         voice_label.config(text=state['status'] + (' | Last: ' + state['lastCommand'] if state['lastCommand'] else ''))
@@ -96,7 +96,7 @@ def main():
     thread.join(timeout=5)
 
 if __name__ == '__main__':
-    if len(sys.argv)==4 and sys.argv[1]=='--voice-self-test':
+    if len(sys.argv) in (4,5) and sys.argv[1]=='--voice-self-test':
         # Explicit diagnostic mode: prerecorded file only, never opens a microphone.
         try:
             import wave
@@ -109,7 +109,8 @@ if __name__ == '__main__':
                 rec.AcceptWaveform(audio.readframes(audio.getnframes()))
                 text=json.loads(rec.FinalResult()).get('text','')
             command=parse_command(text)
-            assert command=='head_on', 'Speech fixture was not recognized'
+            expected=sys.argv[4] if len(sys.argv)==5 else 'head_on'
+            assert command==expected, 'Speech fixture was not recognized'
             Path(sys.argv[3]).write_text(json.dumps({'passed':True,'command':command}),encoding='utf-8')
         except Exception as exc:
             Path(sys.argv[3]).write_text(json.dumps({'passed':False,'error':str(exc)}),encoding='utf-8')

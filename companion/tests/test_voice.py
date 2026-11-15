@@ -53,3 +53,13 @@ def test_missing_microphone_does_not_crash(monkeypatch, tmp_path):
     monkeypatch.setattr(vosk,'Model',loading_model)
     muted._listen(None)
     assert muted.snapshot()['status']=='Off'
+
+
+def test_feeling_phrase_and_action():
+    assert parse_command("How you feeling little buddy?")=="Feeling"
+    assert parse_command("Little buddy, how are you feeling?")=="Feeling"
+    assert parse_command("how do you feel little buddy")=="Feeling"
+    assert parse_command("how you feeling") is None
+    v=Voice(lambda:100.)
+    assert v.recognized("How you feeling little buddy?")
+    assert v.snapshot()['events'][-1]['command']=="Feeling"

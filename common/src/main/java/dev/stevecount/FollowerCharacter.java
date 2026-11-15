@@ -99,7 +99,7 @@ final class FollowerCharacter {
         if(riding && mc.options.getCameraType().isFirstPerson())return;
         float size=riding?c.headRideScale:c.characterScale;
         String emote=punching?"None":BuddyEmotes.current(now);
-        if(riding)pos=mc.player.getPosition(partial).add(0,mc.player.getBbHeight()-.12,0);
+        if(riding)pos=mc.player.getPosition(partial);
         if(emote.equals("Cheer") && !riding)pos=pos.add(0,Math.abs(Math.sin(BuddyEmotes.elapsed(now)*7))*.2,0);
         if(punching)pos=pos.lerp(GiftPunch.strikePosition(mc.player.position(),mc.player.getYRot()),Math.sin(punch*Math.PI));
         BuddyRenderState state=new BuddyRenderState();
@@ -139,7 +139,12 @@ final class FollowerCharacter {
             // Vanilla's name tag submitter adds another 0.5 blocks.
             state.nameTagAttachment=new Vec3(0,state.boundingBoxHeight-.30,0);
         }
-        world.entityRenderStates.add(state);
+        if(riding) {
+            for(var owner:world.entityRenderStates)
+                if(owner instanceof AvatarRenderState avatar && !(owner instanceof BuddyRenderState) && avatar.id==mc.player.getId()) {
+                    ((HeadPassenger)avatar).stevecount$setPassenger(state);break;
+                }
+        } else world.entityRenderStates.add(state);
         if(Boolean.getBoolean("stevecount.followerSmoke")) {extractedFrames++;lastSmokeState=state;}
     }
 }

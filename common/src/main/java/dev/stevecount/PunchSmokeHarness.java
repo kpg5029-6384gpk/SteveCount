@@ -68,7 +68,7 @@ final class PunchSmokeHarness {
         if(tick==940) {
             var state=FollowerCharacter.lastSmokeState;
             check(state.headRide && state.scale==.18f,"Tiny seated head rider");
-            check(Math.abs(state.y-mc.player.getY()-mc.player.getBbHeight()+.12)<.05,"Rider tracks head height");capture("head-ride");
+            check(HeadRide.submittedFrames>0 && HeadRide.lastSeatError<.0001,"Rider seat touches rendered head");capture("head-ride");
         }
         if(tick==960)SteveCount.settings.animations=false;
         if(tick==980) {check(FollowerCharacter.lastSmokeState.headRide,"Head ride works with animations off");SteveCount.settings.animations=true;SteveCount.settings.characterHeadRide=false;mc.gui.setScreen(new EmoteScreen(null));}
@@ -109,10 +109,12 @@ final class PunchSmokeHarness {
         if(tick==1280) {
             SteveCount.settings.voiceControl=true;voice(0,"head_on");BuddyVoice.tick();
             voice(1,"head_on");BuddyVoice.tick();check(SteveCount.settings.characterHeadRide,"Voice head-on dispatch in game");
-            voice(2,"Dance");BuddyVoice.tick();check(BuddyEmotes.current(System.currentTimeMillis()).equals("Dance"),"Voice dance dispatch in game");
-            voice(3,"head_off");BuddyVoice.tick();check(!SteveCount.settings.characterHeadRide,"Voice head-off dispatch in game");
-            voice(4,"stop");BuddyVoice.tick();check(BuddyEmotes.current(System.currentTimeMillis()).equals("None"),"Voice stop dispatch in game");
-            SteveCount.settings.voiceControl=false;voice(5,"head_on");BuddyVoice.tick();
+            voice(2,"Dance");BuddyVoice.tick();check(PlayerEmotesBridge.available()?PlayerEmotesBridge.VOICE_DANCES.stream().anyMatch(emoteId->BuddyEmotes.current(System.currentTimeMillis()).equals("PlayerEmotes:"+emoteId)):BuddyEmotes.current(System.currentTimeMillis()).equals("Dance"),"Voice dance dispatch in game");
+            voice(3,"Wave");BuddyVoice.tick();check(BuddyEmotes.current(System.currentTimeMillis()).equals(PlayerEmotesBridge.available()?"PlayerEmotes:playeremotes:wave":"Wave"),"Voice wave dispatch");
+            voice(4,"Feeling");BuddyVoice.tick();check(PlayerEmotesBridge.available()?BuddyEmotes.current(System.currentTimeMillis()).startsWith("PlayerEmotes:"):BuddyEmotes.current(System.currentTimeMillis()).equals("Cheer"),"Feeling voice dispatch");
+            voice(5,"head_off");BuddyVoice.tick();check(!SteveCount.settings.characterHeadRide,"Voice head-off dispatch in game");
+            voice(6,"stop");BuddyVoice.tick();check(BuddyEmotes.current(System.currentTimeMillis()).equals("None"),"Voice stop dispatch in game");
+            SteveCount.settings.voiceControl=false;voice(7,"head_on");BuddyVoice.tick();
             SteveCount.settings.voiceControl=true;BuddyVoice.tick();check(!SteveCount.settings.characterHeadRide,"Disabled voice not replayed when enabled");
             SteveCount.settings.voiceControl=false;SteveCount.bridge.voice=new com.google.gson.JsonObject();
             LogUtils.getLogger().info("SteveCount voice world QA PASSED: synthetic action feed, head on/off, dance, stop, disabled replay rejection. No microphone capture.");

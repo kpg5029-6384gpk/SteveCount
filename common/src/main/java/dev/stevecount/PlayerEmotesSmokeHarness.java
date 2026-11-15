@@ -50,11 +50,26 @@ final class PlayerEmotesSmokeHarness {
         }
         if(tick==1550)capture("player-emotes-native-wheel");
         if(tick==1560) {
+            mc.gui.setScreen(null);SteveCount.settings.characterHeadRide=true;SteveCount.settings.characterSkin="Steve";SteveCount.settings.headRideScale=.18f;
+            mc.player.setXRot(-70);BuddyEmotes.stop();before=HeadRide.submittedFrames;
+        }
+        if(tick==1580) {check(HeadRide.submittedFrames>before && HeadRide.lastSeatError<.0001,"Head attachment seat contact looking up");check(Math.abs(HeadRide.lastUp.y)<.6,"Whole rider tilts with head pitch");capture("head-attached-up");}
+        if(tick==1590) {mc.player.setXRot(70);SteveCount.settings.headRideScale=.6f;}
+        if(tick==1610) {check(HeadRide.lastSeatError<.0001,"Maximum-scale rider remains seated looking down");capture("head-attached-down-large");}
+        if(tick==1620) {SteveCount.settings.characterSkin="Astronaut";mc.player.setXRot(-60);}
+        if(tick==1640) {check(HeadRide.lastSeatError<.0001,"Astronaut seat contact while tilted");capture("head-attached-astronaut");}
+        if(tick==1650) {
+            check(choices.stream().map(PlayerEmotesBridge.Choice::id).collect(java.util.stream.Collectors.toSet()).containsAll(PlayerEmotesBridge.VOICE_DANCES),"All five requested library dances exist");
+            for(int i=0;i<30;i++) {PlayerEmotesBridge.voice("Dance");check(PlayerEmotesBridge.VOICE_DANCES.stream().anyMatch(id->BuddyEmotes.current(System.currentTimeMillis()).equals("PlayerEmotes:"+id)),"Voice selects only requested five dances");}
+            PlayerEmotesBridge.voice("Wave");check(BuddyEmotes.current(System.currentTimeMillis()).equals("PlayerEmotes:playeremotes:wave"),"Voice uses actual library wave");
+            PlayerEmotesBridge.voice("Feeling");check(BuddyEmotes.current(System.currentTimeMillis()).startsWith("PlayerEmotes:"),"Feeling picks compatible library solo");
+        }
+        if(tick==1670) {
             BuddyEmotes.stop();SteveCount.settings.characterHeadRide=false;SteveCount.settings.headRideScale=.18f;SteveCount.settings.streamerMode=true;
             com.mojang.logging.LogUtils.getLogger().info("SteveCount Player Emotes world QA PASSED: {} solo emotes, player rig, astronaut rig, loop, stop, head ride and searchable menu. Original 2.0.3 assets, no copied animations.",choices.size());
             mc.stop();
         }
-        if(tick>1600)throw new AssertionError("Player Emotes QA timed out");
+        if(tick>1710)throw new AssertionError("Player Emotes QA timed out");
     }
     private static void play(String id) {BuddyEmotes.play(choices.stream().filter(c->c.id().equals("playeremotes:"+id)).findFirst().orElseThrow());}
     private static void capture(String name) {

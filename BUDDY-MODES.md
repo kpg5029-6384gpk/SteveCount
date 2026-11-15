@@ -28,3 +28,8 @@ independent; use Stop / mute voice to stop microphone capture.
 
 Existing profiles default to Streamer and retain their prior appearance. This update
 only needs the matching new JAR; the previous offline-voice companion is compatible.
+
+The head rider attaches to the rendered head bone, including looking up/down and
+turning, rather than hovering over the body. Its seated contact point stays in place
+when the scale changes. The whole rider follows the head's tilt; first-person hiding
+remains enabled.

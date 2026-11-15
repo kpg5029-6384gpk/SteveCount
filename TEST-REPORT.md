@@ -1,5 +1,14 @@
 # SteveCount verification report — 2026-11-12
 
+## Head attachment and voice library actions — 2026-11-15
+
+- The rider is submitted at the owning avatar's actual rendered head transform, not body height. It follows pitch/yaw and the renderer's crouch/flight transforms. Its seated contact offset scales with the model. Native player states carry only a per-frame attachment, cleared at extraction; no entity or world data is created.
+- Both loaders compiled with **236 core assertions** each. Geometry checks cover 8%, 18%, 42% and 60% scales and pitches from -90 to +90 degrees. Voice tests restrict Dance to the five requested IDs, avoid immediate repeats, select the library Wave, select compatible Feeling solos and handle a missing library.
+- Real disposable-world tests with official Player Emotes 2.0.3 cover player/astronaut rendering, head riding, looking up/down and enlarged seated contact. Representative screenshots were inspected. The tests also check synthetic voice dispatch and the existing inventory/pause combat regressions. Dedicated flight/crouch animation scenarios, custom player rigs and shader packs were not separately tested.
+- **85 Python tests passed locally**, including the new phrase, wake-name requirement and action feed. A locally synthesized “How you feeling little buddy?” sample was recognized as Feeling using the bundled Vosk model. This does not verify Fiishy's microphone, accent or background noise. No new live TikTok or paid-gift test was performed.
+- Install Player Emotes 2.0.3 separately to use its animations. Replace the JAR and companion EXE for this update. Without the optional mod, Wave/Dance use built-ins and Feeling uses Cheer.
+
+
 ## Rounded astronaut and random personality — 2026-11-15
 
 - Fabric and NeoForge rendered the rounded custom mesh in real disposable development worlds and passed the extended astronaut/emote/head-ride/automatic activity checks. Native mesh compilation was asserted, and representative wave, dance, cheer, punch-preview, head-ride and personality-menu captures were visually inspected. Inventory and true pause/resume gift tests and normal combat regressions remain passing with synthetic events.

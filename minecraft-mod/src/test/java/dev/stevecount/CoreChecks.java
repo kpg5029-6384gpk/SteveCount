@@ -186,6 +186,26 @@ public final class CoreChecks {
         check(FollowerCharacter.label(stale).contains("128 viewers ~"),"Character stale label");
         SteveCount.demo=true;
         check(FollowerCharacter.label(stale).startsWith("DEMO Reconnecting"),"Character demo is explicit");
+        var catalog=new java.util.ArrayList<PlayerEmotesBridge.Choice>();
+        for(String id:PlayerEmotesBridge.VOICE_DANCES)catalog.add(new PlayerEmotesBridge.Choice(id,id,new Object(),2,true));
+        catalog.add(new PlayerEmotesBridge.Choice("playeremotes:wave","Wave",new Object(),2,true));
+        catalog.add(new PlayerEmotesBridge.Choice("playeremotes:floss","Floss",new Object(),2,false));
+        var rng=new java.util.Random(15);var seen=new java.util.HashSet<String>();String previous="";
+        for(int i=0;i<50;i++) {
+            var picked=PlayerEmotesBridge.voiceChoice(catalog,"Dance",rng);
+            check(PlayerEmotesBridge.VOICE_DANCES.contains(picked.id()) && !picked.id().equals(previous),"Dance pool stays restricted and avoids immediate repeat");
+            previous=picked.id();seen.add(previous);
+        }
+        check(seen.equals(PlayerEmotesBridge.VOICE_DANCES),"Every requested dance can be chosen");
+        check(PlayerEmotesBridge.voiceChoice(catalog,"Wave",rng).id().equals("playeremotes:wave"),"Voice wave is actual library wave");
+        check(PlayerEmotesBridge.voiceChoice(catalog,"Feeling",rng)!=null,"Feeling selects compatible solo");
+        check(PlayerEmotesBridge.voiceChoice(java.util.List.of(),"Feeling",rng)==null,"Missing library has explicit fallback");
+        for(float size:new float[]{.08f,.18f,.42f,.6f})for(float pitch:new float[]{-90,-70,0,70,90}) {
+            var stack=new com.mojang.blaze3d.vertex.PoseStack();stack.translate(2,3,4);stack.rotate(new org.joml.Quaternionf().rotationXYZ(pitch*(float)Math.PI/180,1.2f,.3f));
+            var contact=stack.last().pose().transformPosition(new org.joml.Vector3f());
+            HeadRide.mountSeat(stack,size);
+            check(stack.last().pose().transformPosition(new org.joml.Vector3f(0,.75f,0)).distance(contact)<.00001,"Seat contact is independent of pitch and scale");
+        }
         System.out.println("SteveCount: "+checks+" core assertions passed");
     }
 }

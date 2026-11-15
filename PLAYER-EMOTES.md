@@ -10,8 +10,8 @@
 4. Search or page through the list and click an emote. It plays on Little Buddy.
    **Stop emote** stops loops or held poses. Use F5 to see a head-riding buddy.
 
-The previous companion works unchanged. No companion, TikTok connection, server mod
-or internet is needed to play these animations once the mods are installed.
+Replace the companion EXE as well for the new Feeling voice phrase. No companion,
+TikTok connection, server mod or internet is needed for the in-game animation buttons.
 
 Player Emotes is an optional separate mod, not bundled or automatically downloaded.
 Without it, SteveCount loads normally and its existing Wave/Dance/Cheer buttons,
@@ -35,15 +35,19 @@ Player Emotes' own B wheel controls your real player separately.
   They never move the follower's collision checks, the player, world blocks or hitboxes.
 - Head riding keeps the seated legs and disables imported whole-body root motion;
   the upper body can still emote without jumping away from the player's head.
+  The seat attaches directly to the rendered head bone, including pitch, yaw,
+  crouching and flight transforms. Changing head-riding scale preserves seat contact.
 - Playback stops on death, world changes, hiding the character or disabling animations.
   A gift punch temporarily takes visual priority. No animation triggers combat.
 
 ## Deliberate limits
 
 Partner emotes, prop/item-dependent emotes, imported sounds/particles and server-side
-emote requests are not played by this adapter. Random actions and the existing voice
-commands still use SteveCount's built-in Wave/Dance/Cheer; library emotes are selected
-through the in-game buttons. Loops/held poses continue until stopped or replaced.
+emote requests are not played by this adapter. Automatic personality actions keep
+using built-in emotes. Voice commands now select library emotes: Dance randomly picks Ground Spin, Robot Dance,
+Matrix Dodge, Thriller or Side Step Shuffle; Wave uses the library Wave; “how you
+feeling little buddy?” chooses a random compatible solo. Without the optional mod,
+Dance/Wave fall back to built-ins and Feeling falls back to Cheer. Loops/held poses continue until stopped or replaced.
 
 The optional adapter targets the verified public interfaces in **2.0.3**. If an upstream
 update changes them, it disables the integration with a diagnostic instead of crashing

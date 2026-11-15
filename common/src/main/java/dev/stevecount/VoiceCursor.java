@@ -7,7 +7,7 @@ import java.util.Set;
 final class VoiceCursor {
     private String session="";
     private long sequence;
-    private static final Set<String> COMMANDS=Set.of("head_on","head_off","Dance","Wave","Cheer","stop","recall");
+    private static final Set<String> COMMANDS=Set.of("head_on","head_off","Dance","Wave","Cheer","Feeling","stop","recall");
     String accept(JsonObject feed,double now,boolean armed) {
         try {
             String id=feed.get("session").getAsString();

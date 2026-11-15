@@ -13,6 +13,7 @@ ALIASES = {
     'hop on': 'head_on', 'hop on my head': 'head_on', 'get on my head': 'head_on',
     'head ride': 'head_on', 'hop off': 'head_off', 'get off': 'head_off',
     'get off my head': 'head_off', 'come down': 'head_off',
+    'how you feeling': 'Feeling', 'how are you feeling': 'Feeling', 'how do you feel': 'Feeling',
     'dance': 'Dance', 'wave': 'Wave', 'cheer': 'Cheer',
     'stop': 'stop', 'stop dancing': 'stop', 'come here': 'recall', 'recall': 'recall',
 }

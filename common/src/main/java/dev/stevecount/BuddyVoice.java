@@ -16,7 +16,8 @@ final class BuddyVoice {
         switch(action) {
             case "head_on" -> {BuddyEmotes.stop();c.characterHeadRide=true;if(!c.showCharacter())c.displayMode="Both";}
             case "head_off" -> {c.characterHeadRide=false;BuddyEmotes.stop();FollowerCharacter.recall();}
-            case "Dance","Wave","Cheer" -> BuddyEmotes.play(action);
+            case "Dance","Wave","Feeling" -> PlayerEmotesBridge.voice(action);
+            case "Cheer" -> BuddyEmotes.play(action);
             case "stop" -> {BuddyEmotes.stop();BuddyPersonality.rest();}
             case "recall" -> {c.characterHeadRide=false;FollowerCharacter.recall();}
             default -> {return;}
