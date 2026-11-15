@@ -79,3 +79,6 @@ Optional omissions: automatic companion launching, arbitrary remote custom head 
 
 ## Adjustable head rider and Regular mode
 156 Java core assertions per loader cover size limits/nonfinite recovery, saved settings, Streamer display restoration and Regular display suppression. Both loaders verified in disposable worlds: custom 42% head-rider render scale, no name tag/HUD in Regular, options screen capture, and existing cosmetic/voice/combat regressions. No new paid gift/live TikTok tests; companion unchanged.
+
+## Player Emotes integration
+162 Java core assertions per loader, including no required Player Emotes classes and imported playback duration/stop checks. Official Player Emotes 2.0.3 JARs tested locally on Fabric and NeoForge in disposable worlds: 46 solo entries, native humanoid Wave/Floss, astronaut Wave/Robot Dance/Backflip, stop, loops, seated head-ride emote, search, and original native UI coexistence. Representative screenshots inspected. NeoForge 26.3.0.102 exposed a legacy preview-registration mismatch in the upstream mod; the scoped NeoForge-only adapter corrected it. Separate loaded and missing-mod menu smoke tests are used. No new paid gifts/live TikTok connection tests or FPS profiling. No Player Emotes assets are redistributed.

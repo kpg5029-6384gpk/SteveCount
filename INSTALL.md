@@ -27,3 +27,6 @@ Replace both the JAR and companion for this update. In the companion select your
 
 ## Regular mode and adjustable head rider
 Press **J > Buddy options** (or K > Character > Buddy options). The head-riding size slider changes the seated buddy from 8% to 60%, separately from ground size. **Regular** keeps the buddy without viewer HUD/status labels, milestones or TikTok gift damage; **Streamer** restores stream displays. Both settings persist. See [BUDDY-MODES.md](BUDDY-MODES.md). This update needs only the matching new JAR; the offline-voice companion remains compatible.
+
+## Optional Player Emotes library
+Install **Player Emotes 2.0.3 for Minecraft 26.3** for your loader from https://modrinth.com/mod/player-emotes, alongside the matching updated SteveCount JAR. Restart and press **J > Player Emotes** to search 46 compatible solo animations for Little Buddy. Player-style skins use native limb poses; the astronaut retargets them onto its rigid rounded limbs. Partner/prop emotes and imported sound/particle effects are excluded. SteveCount still works without this optional mod, and the companion is unchanged. See [PLAYER-EMOTES.md](PLAYER-EMOTES.md).

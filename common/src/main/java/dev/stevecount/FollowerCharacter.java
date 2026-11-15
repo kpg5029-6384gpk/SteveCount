@@ -104,6 +104,7 @@ final class FollowerCharacter {
         if(punching)pos=pos.lerp(GiftPunch.strikePosition(mc.player.position(),mc.player.getYRot()),Math.sin(punch*Math.PI));
         BuddyRenderState state=new BuddyRenderState();
         state.emote=emote;state.emoteTime=BuddyEmotes.elapsed(now);state.headRide=riding;
+        state.playerEmoteFrame=PlayerEmotesBridge.frame(emote,state.emoteTime);
         state.astronaut=c.characterSkin.equals("Astronaut");
         state.isSpectator=state.astronaut; // Suppress vanilla clothing/equipment layers for the custom model.
         state.entityType=EntityTypes.PLAYER;

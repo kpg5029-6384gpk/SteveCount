@@ -53,6 +53,7 @@ neoForge {
             if (project.hasProperty('stevecountSmoke')) systemProperty 'stevecount.smoke', 'true'
             if (project.hasProperty('stevecountFollowerSmoke')) systemProperty 'stevecount.followerSmoke', 'true'
             if (project.hasProperty('stevecountPunchSmoke')) {systemProperty 'stevecount.followerSmoke', 'true';systemProperty 'stevecount.punchSmoke', 'true'}
+            if (project.hasProperty('stevecountPlayerEmotesSmoke')) {systemProperty 'stevecount.followerSmoke', 'true';systemProperty 'stevecount.punchSmoke', 'true';systemProperty 'stevecount.playerEmotesSmoke', 'true'}
             // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }

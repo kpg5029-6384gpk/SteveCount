@@ -9,7 +9,10 @@ public final class BuddyEmotes {
         if(!SteveCount.settings.animations || now-started>=duration(active))return "None";
         return active;
     }
-    static int duration(String name) {return switch(name) {case "Wave","Cheer"->4000;case "Dance"->6000;default->0;};}
+    static int duration(String name) {return switch(name) {case "Wave","Cheer"->4000;case "Dance"->6000;default->PlayerEmotesBridge.duration(name);};}
+    static void play(PlayerEmotesBridge.Choice choice) {
+        PlayerEmotesBridge.select(choice);play("PlayerEmotes:"+choice.id());
+    }
     static void play(String name) {
         if(duration(name)==0) {stop();return;}
         SteveCount.settings.animations=true;
@@ -20,5 +23,5 @@ public final class BuddyEmotes {
     static void playAutomatically(String name,long now) {if(duration(name)>0){active=name;started=now;automatic=true;}}
     static void stopAutomatic() {if(automatic)stop();}
     static float elapsed(long now) {return (now-started)/1000f;}
-    static void stop() {active="None";automatic=false;}
+    static void stop() {active="None";automatic=false;PlayerEmotesBridge.stop();}
 }

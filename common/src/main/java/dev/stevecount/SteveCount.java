@@ -39,6 +39,7 @@ public final class SteveCount {
     }
     static void changeDemo(long n) { demoCount=Math.max(0,n);demoPeak=Math.max(demoPeak,demoCount); }
     static void tick() {
+        if(!settings.animations)BuddyEmotes.stop();
         FollowerCharacter.tick();
         BuddyPersonality.tick();
         GiftPunch.tick();

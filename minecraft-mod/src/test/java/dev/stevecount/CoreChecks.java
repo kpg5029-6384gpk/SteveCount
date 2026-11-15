@@ -7,6 +7,14 @@ public final class CoreChecks {
     static int checks;
     static void check(boolean ok,String message) {checks++;if(!ok)throw new AssertionError(message);}
     public static void main(String[] args) throws Exception {
+        check(!PlayerEmotesBridge.available(),"Player Emotes remains optional on the default test classpath");
+        check(PlayerEmotesBridge.frame("None",0)==null,"Missing optional mod has no render frame");
+        PlayerEmotesBridge.select(new PlayerEmotesBridge.Choice("test:wave","Wave",new Object(),2,true));
+        check(PlayerEmotesBridge.duration("PlayerEmotes:test:wave")==2000,"Imported one-shot duration");
+        check(PlayerEmotesBridge.duration("PlayerEmotes:test:other")==0,"Unselected animation cannot play");
+        PlayerEmotesBridge.select(new PlayerEmotesBridge.Choice("test:dance","Dance",new Object(),8,false));
+        check(PlayerEmotesBridge.duration("PlayerEmotes:test:dance")==Integer.MAX_VALUE,"Imported loops and held poses remain until stopped");
+        PlayerEmotesBridge.stop();check(PlayerEmotesBridge.duration("PlayerEmotes:test:dance")==0,"Stop clears imported selection");
         var buddyOptions=new Settings();
         check(buddyOptions.streamerMode && buddyOptions.headRideScale==.18f,"Existing profiles retain streamer mode and original rider size");
         buddyOptions.headRideScale=Float.NaN;buddyOptions.validate();check(buddyOptions.headRideScale==.18f,"Nonfinite rider size recovers");

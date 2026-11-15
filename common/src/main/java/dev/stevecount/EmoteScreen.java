@@ -13,7 +13,8 @@ public final class EmoteScreen extends Screen {
     }
     @Override protected void init() {
         button("Wave",40,()->play("Wave"));
-        button("Dance",64,()->play("Dance"));
+        addRenderableWidget(Button.builder(Component.literal("Dance"),b->play("Dance")).bounds((width-300)/2,64,146,20).build());
+        addRenderableWidget(Button.builder(Component.literal("Player Emotes"),b->minecraft.gui.setScreen(new PlayerEmotesScreen(this))).bounds((width-300)/2+154,64,146,20).build());
         button("Cheer",88,()->play("Cheer"));
         button("Tiny head rider: "+SteveCount.settings.characterHeadRide,112,()->{
             var c=SteveCount.settings;c.characterHeadRide=!c.characterHeadRide;

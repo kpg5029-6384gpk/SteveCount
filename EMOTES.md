@@ -24,3 +24,6 @@ Use **F5** to see the tiny rider. It is hidden in first person to keep it out of
 Emotes are cosmetic, client-only and do not damage anyone. They have **no TikTok gift bindings** in this release. Pressing an emote button enables character display and animations if necessary. The global Animations switch stops animated emotes; the static head ride still works. A real enabled gift punch takes visual priority and then returns to head-riding mode.
 
 Head-riding preference and skin selection persist across restarts. Temporary emotes stop on leaving a world or dying and are not saved as stream statistics. Other players do not see the buddy; game capture can.
+
+## Optional Player Emotes library
+Install **Player Emotes 2.0.3 for Minecraft 26.3** for your loader from https://modrinth.com/mod/player-emotes, alongside the matching updated SteveCount JAR. Restart and press **J > Player Emotes** to search 46 compatible solo animations for Little Buddy. Player-style skins use native limb poses; the astronaut retargets them onto its rigid rounded limbs. Partner/prop emotes and imported sound/particle effects are excluded. SteveCount still works without this optional mod, and the companion is unchanged. See [PLAYER-EMOTES.md](PLAYER-EMOTES.md).

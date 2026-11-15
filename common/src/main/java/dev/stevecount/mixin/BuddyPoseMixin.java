@@ -1,6 +1,7 @@
 package dev.stevecount.mixin;
 
 import dev.stevecount.BuddyRenderState;
+import dev.stevecount.PlayerEmotesBridge;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
@@ -20,6 +21,7 @@ abstract class BuddyPoseMixin {
     @Inject(method="setupAnim(Lnet/minecraft/client/renderer/entity/state/HumanoidRenderState;)V",at=@At("TAIL"))
     private void stevecount$pose(HumanoidRenderState state,CallbackInfo ci) {
         if(!(state instanceof BuddyRenderState buddy))return;
+        if(PlayerEmotesBridge.posePlayer((HumanoidModel<?>)(Object)this,buddy))return;
         float beat=(float)Math.sin(buddy.emoteTime*9);
         if(buddy.headRide) {
             rightLeg.xRot=leftLeg.xRot=-1.4f;rightLeg.yRot=.3f;leftLeg.yRot=-.3f;

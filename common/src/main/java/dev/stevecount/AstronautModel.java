@@ -14,12 +14,14 @@ public final class AstronautModel extends EntityModel<BuddyRenderState> {
     private static final class Holder {static final AstronautModel MODEL=new AstronautModel();}
     public static AstronautModel instance() {return Holder.MODEL;}
     private final ModelPart head,body,rightArm,leftArm,rightLeg,leftLeg;
+    private final ModelPart[] emoteParts;
     private static final int HOOD=0xFF59616E,TRIM=0xFF353445,GLASS=0xFF281735,WHITE=0xFFE4EFF1,BLUE=0xFF668ED0;
     private AstronautModel() {
         super(build());
         head=root.getChild("head");body=root.getChild("body");
         rightArm=root.getChild("right_arm");leftArm=root.getChild("left_arm");
         rightLeg=root.getChild("right_leg");leftLeg=root.getChild("left_leg");
+        emoteParts=new ModelPart[]{body,head,rightArm,leftArm,rightLeg,leftLeg};
     }
     private static ModelPart build() {
         var parts=new LinkedHashMap<String,ModelPart>();
@@ -83,6 +85,7 @@ public final class AstronautModel extends EntityModel<BuddyRenderState> {
             case "Dance" -> {rightArm.xRot=beat*1.1f;leftArm.xRot=-beat*1.1f;rightArm.zRot=-.45f;leftArm.zRot=.45f;if(!s.headRide){rightLeg.xRot=-beat*.6f;leftLeg.xRot=beat*.6f;}}
         }
         if(s.swingAnimation>0)rightArm.xRot=-2.2f*(float)Math.sin(s.swingAnimation*Math.PI);
+        PlayerEmotesBridge.poseAstronaut(root,emoteParts,s);
     }
     /** Cached vertices with smooth ellipsoid normals. Native lighting and overlay are retained. */
     static final class RoundMesh extends ModelPart.Cube {

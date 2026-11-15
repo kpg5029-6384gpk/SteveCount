@@ -1,6 +1,7 @@
 # Third-party notices
 
 SteveCount authored code: MIT; see LICENSE.
+Optional Player Emotes mod and animations by YamiKhal are installed separately, not redistributed. See PLAYER-EMOTES.md.
 User-selected Fiishy skin: see SKIN-NOTICE.md for source and artwork attribution.
 Minecraft Steve/Alex textures are referenced from the installed game and are not redistributed.
 NeoForge MDK template: see minecraft-mod/TEMPLATE_LICENSE.txt in the source archive.

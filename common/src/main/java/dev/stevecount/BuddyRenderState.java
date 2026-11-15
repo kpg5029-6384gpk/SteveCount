@@ -8,4 +8,5 @@ public final class BuddyRenderState extends AvatarRenderState {
     public float emoteTime;
     public boolean headRide;
     public boolean astronaut;
+    public Object playerEmoteFrame;
 }

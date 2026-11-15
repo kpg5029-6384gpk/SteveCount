@@ -61,7 +61,8 @@ final class FollowerSmokeHarness {
             LogUtils.getLogger().info("SteveCount follower world smoke passed: skins, sizes, labels, movement, teleport and disable; {} frames",FollowerCharacter.extractedFrames);
             if(!Boolean.getBoolean("stevecount.punchSmoke"))mc.stop();
         }
-        if(Boolean.getBoolean("stevecount.punchSmoke") && worldTicks>=550)PunchSmokeHarness.tick(worldTicks);
+        if(Boolean.getBoolean("stevecount.playerEmotesSmoke") && worldTicks>=1310)PlayerEmotesSmokeHarness.tick(worldTicks);
+        else if(Boolean.getBoolean("stevecount.punchSmoke") && worldTicks>=550)PunchSmokeHarness.tick(worldTicks);
     }
     private static void teleport(double x,double z) {
         var mc=Minecraft.getInstance();var server=mc.getSingleplayerServer();var id=mc.player.getUUID();
