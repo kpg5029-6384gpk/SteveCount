@@ -21,3 +21,6 @@ To enable optional single-player Hand Heart damage, follow [GIFTS.md](GIFTS.md).
 
 To uninstall, close the companion and remove SteveCount's JAR and extracted folder. Its settings are in the instance's `config/stevecount.json`, and local companion files in `%LOCALAPPDATA%\SteveCount`. No entity or custom data is saved in worlds. Normal health/gameplay consequences of previously enabled gift punches remain.
 
+
+## Optional offline voice commands
+Replace both the JAR and companion for this update. In the companion select your microphone and Start voice. In Minecraft press J and enable Voice commands. Say “little buddy hop on”, “hop off little buddy”, or “dance little buddy”. Voice starts off each companion launch. Stop / mute voice stops microphone capture. See [VOICE.md](VOICE.md) for commands, privacy and troubleshooting.

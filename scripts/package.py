@@ -19,6 +19,9 @@ def main():
     shutil.copy2(fabric_jar,DIST/'SteveCount-26.3-Fabric.jar')
     notices=DIST/'licenses'
     notices.mkdir(exist_ok=True)
+    (notices/'vosk-model').mkdir(exist_ok=True)
+    shutil.copy2(ROOT/'companion/APACHE-2.0.txt',notices/'vosk-model/APACHE-2.0.txt')
+    (notices/'vosk-model/NOTICE.txt').write_text('vosk-model-small-en-us-0.15; Copyright 2020 Alpha Cephei Inc; Apache-2.0. https://alphacephei.com/vosk/models\n',encoding='utf-8')
     lines=['# Third-party notices','', 'SteveCount authored code: MIT; see LICENSE.',
            'User-selected Fiishy skin: see SKIN-NOTICE.md for source and artwork attribution.',
            'Minecraft Steve/Alex textures are referenced from the installed game and are not redistributed.',
@@ -49,6 +52,9 @@ def main():
     if not exe.is_file(): raise SystemExit('Build companion first')
     from PyInstaller.archive.readers import CArchiveReader
     archive=CArchiveReader(str(exe))
+    for required in ('voice-model/vosk-model-small-en-us-0.15/am/final.mdl','vosk/libvosk.dll'):
+        if required not in {name.replace('\\','/') for name in archive.toc}:
+            raise SystemExit('Frozen companion is missing '+required)
     if not any('betterproto2-' in name and name.endswith('METADATA') for name in archive.toc):
         raise SystemExit('Frozen companion is missing betterproto2 metadata')
     ssl_asset=Path(ssl.__file__).with_name('codex-rejected-cas.pem')

@@ -14,6 +14,7 @@ final class Bridge {
     }
     volatile Snapshot snapshot = Snapshot.empty("Not Configured", "");
     volatile JsonObject gifts = new JsonObject();
+    volatile JsonObject voice = new JsonObject();
     private final ScheduledExecutorService worker = Executors.newSingleThreadScheduledExecutor(r -> { var t=new Thread(r,"SteveCount bridge");t.setDaemon(true);return t; });
     private final HttpClient http = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(2)).build();
     private volatile boolean enabled;
@@ -31,14 +32,17 @@ final class Bridge {
         return result.body();
     }
     private void poll() {
-        if (!enabled) return;
+        if (!enabled && !SteveCount.settings.voiceControl) return;
         try {
             var j=JsonParser.parseString(request("status",null)).getAsJsonObject();
             Long count=j.get("viewers").isJsonNull()?null:j.get("viewers").getAsLong();
             if(count!=null && count<0) throw new IllegalArgumentException("Invalid count");
             snapshot=new Snapshot(j.get("status").getAsString(),count,j.get("peak").getAsLong(),j.get("updated").getAsDouble(),j.get("stale").getAsBoolean(),j.get("message").getAsString(),j.get("username").getAsString(),j.get("room").getAsString());
+            voice=j.has("voice")?j.getAsJsonObject("voice"):new JsonObject();
             gifts=j.has("gifts")?j.getAsJsonObject("gifts"):new JsonObject();
         } catch(Exception ex) {
+            voice=new JsonObject();
+            if(!enabled)return;
             var old=snapshot;
             snapshot=new Snapshot("Reconnecting",old.viewers,old.peak,old.updated,old.viewers!=null,"Launch SteveCount Companion; "+ex.getClass().getSimpleName(),old.username,old.room);
         }

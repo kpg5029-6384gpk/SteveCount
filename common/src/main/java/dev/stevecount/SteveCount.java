@@ -42,6 +42,7 @@ public final class SteveCount {
         FollowerCharacter.tick();
         BuddyPersonality.tick();
         GiftPunch.tick();
+        BuddyVoice.tick();
         if(Boolean.getBoolean("stevecount.followerSmoke")) FollowerSmokeHarness.tick();
         if(Boolean.getBoolean("stevecount.smoke")) SmokeHarness.tick();
         while(key.consumeClick()) open();

@@ -73,3 +73,6 @@ TikTokLive imports deprecated legacy websocket APIs. The tests pass with the loc
 This is a compiled, tested **initial MVP / release candidate**, not a fully production-validated release. The remaining acceptance checks are an approved execution of the packaged companion, an accessible active stream end-to-end, and an in-world gameplay/capture check. Do not describe these as completed.
 
 Optional omissions: automatic companion launching, arbitrary remote custom head lookup, a full GUI color picker, and vanilla toast-queue integration. Palette controls, loaded local-player head support, and a small HUD milestone notification are implemented.
+
+## Offline voice update
+148 Java core assertions per loader; 78 Python tests. Vosk decoded synthesized English “little buddy hop on” into head_on using the bundled model. Both loaders tested in disposable worlds using synthetic voice feeds: head on/off, dance, stop, disabled replay rejection. No microphone was opened during these tests. Actual microphone capture, Fiishy’s accent and stream background noise remain unverified. The Windows workflow separately tests the packaged recognition libraries/model with synthesized speech and the localhost service.

@@ -106,6 +106,17 @@ final class PunchSmokeHarness {
         if(tick==1240)mc.gui.setScreen(new PersonalityScreen(null));
         if(tick==1255)capture("personality-menu");
         if(tick==1270) {check(BuddyPersonality.randomEmotesPlayed==1 && BuddyPersonality.noisesPlayed==1,"Disabled random activity stays off");mc.gui.setScreen(null);}
+        if(tick==1280) {
+            SteveCount.settings.voiceControl=true;voice(0,"head_on");BuddyVoice.tick();
+            voice(1,"head_on");BuddyVoice.tick();check(SteveCount.settings.characterHeadRide,"Voice head-on dispatch in game");
+            voice(2,"Dance");BuddyVoice.tick();check(BuddyEmotes.current(System.currentTimeMillis()).equals("Dance"),"Voice dance dispatch in game");
+            voice(3,"head_off");BuddyVoice.tick();check(!SteveCount.settings.characterHeadRide,"Voice head-off dispatch in game");
+            voice(4,"stop");BuddyVoice.tick();check(BuddyEmotes.current(System.currentTimeMillis()).equals("None"),"Voice stop dispatch in game");
+            SteveCount.settings.voiceControl=false;voice(5,"head_on");BuddyVoice.tick();
+            SteveCount.settings.voiceControl=true;BuddyVoice.tick();check(!SteveCount.settings.characterHeadRide,"Disabled voice not replayed when enabled");
+            SteveCount.settings.voiceControl=false;SteveCount.bridge.voice=new com.google.gson.JsonObject();
+            LogUtils.getLogger().info("SteveCount voice world QA PASSED: synthetic action feed, head on/off, dance, stop, disabled replay rejection. No microphone capture.");
+        }
         if(tick==1310)server.execute(()->{
             var p=server.getPlayerList().getPlayer(id);p.setHealth(.5f);
             GiftPunch.attack(p,p.position().add(0,0,1));check(!p.isAlive(),"No artificial half-heart survival floor");
@@ -118,6 +129,11 @@ final class PunchSmokeHarness {
         var feed=new com.google.gson.JsonObject();feed.addProperty("session","qa");feed.addProperty("sequence",sequence);
         var events=new com.google.gson.JsonArray();var event=new com.google.gson.JsonObject();event.addProperty("sequence",sequence);event.addProperty("created",System.currentTimeMillis()/1000d);events.add(event);feed.add("events",events);
         SteveCount.bridge.gifts=feed;
+    }
+    private static void voice(int sequence,String command) {
+        var feed=new com.google.gson.JsonObject();feed.addProperty("session","voice-qa");feed.addProperty("sequence",sequence);
+        var events=new com.google.gson.JsonArray();var e=new com.google.gson.JsonObject();e.addProperty("sequence",sequence);e.addProperty("created",System.currentTimeMillis()/1000d);e.addProperty("command",command);events.add(e);feed.add("events",events);
+        SteveCount.bridge.voice=feed;
     }
     private static void capture(String name) {
         var mc=Minecraft.getInstance();net.minecraft.client.Screenshot.grab(mc.gameDirectory,"stevecount-"+name+".png",mc.gameRenderer.mainRenderTarget(),1,msg->LogUtils.getLogger().info("Emote QA: {}",msg.getString()));

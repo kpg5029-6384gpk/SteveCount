@@ -23,13 +23,14 @@ public final class EmoteScreen extends Screen {
         button("Stop emote / Return to ground",136,()->{BuddyEmotes.stop();BuddyPersonality.rest();SteveCount.settings.characterHeadRide=false;SteveCount.settings.save();rebuildWidgets();});
         addRenderableWidget(Button.builder(Component.literal("Personality / sounds"),b->minecraft.gui.setScreen(new PersonalityScreen(this))).bounds((width-300)/2,160,194,20).build());
         addRenderableWidget(Button.builder(Component.literal("Recall"),b->FollowerCharacter.recall()).bounds((width-300)/2+202,160,98,20).build());
+        button("Voice commands: "+SteveCount.settings.voiceControl,184,()->{SteveCount.settings.voiceControl=!SteveCount.settings.voiceControl;SteveCount.settings.save();rebuildWidgets();});
         button("Done",height-26,this::onClose);
     }
     private void play(String name) {BuddyEmotes.play(name);SteveCount.settings.save();minecraft.gui.setScreen(parent);}
     @Override public void extractRenderState(GuiGraphicsExtractor g,int mx,int my,float partial) {
         super.extractRenderState(g,mx,my,partial);
         g.centeredText(font,"Buddy emotes",width/2,14,0xFF7FFFD4);
-        g.centeredText(font,"Cosmetic only. Use F5 to see the tiny head rider.",width/2,height-40,0xFFB7CAD0);
+        if(height>=280)g.centeredText(font,"Voice: enable here, then Start voice in the companion. F5: head rider.",width/2,height-40,0xFFB7CAD0);
     }
     @Override public boolean isPauseScreen() {return false;}
     @Override public void onClose() {SteveCount.settings.save();minecraft.gui.setScreen(parent);}

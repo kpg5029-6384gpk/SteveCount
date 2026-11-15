@@ -1,4 +1,4 @@
-name: Build and publish SteveCount astronaut buddy
+name: Build and publish SteveCount offline buddy voice
 on:
   workflow_dispatch:
   push:
@@ -46,6 +46,18 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'Companion checks failed' }
       - name: Build standalone Windows companion
         run: .\companion\build-windows.ps1
+      - name: Test packaged offline speech recognition
+        run: |
+          Add-Type -AssemblyName System.Speech
+          $speaker = New-Object System.Speech.Synthesis.SpeechSynthesizer
+          $speaker.SetOutputToWaveFile((Join-Path (Get-Location) 'voice-fixture.wav'))
+          $speaker.Speak('little buddy hop on.')
+          $speaker.Dispose()
+          $proc = Start-Process -FilePath dist/SteveCount-Companion.exe -ArgumentList '--voice-self-test voice-fixture.wav voice-result.json' -WindowStyle Hidden -PassThru
+          if (-not $proc.WaitForExit(60000)) { $proc.Kill(); throw 'Voice self test timed out' }
+          if ($proc.ExitCode -ne 0) { throw 'Packaged voice self test failed' }
+          $result = Get-Content voice-result.json -Raw | ConvertFrom-Json
+          if (-not $result.passed -or $result.command -ne 'head_on') { throw 'Speech was not recognized' }
       - name: Smoke test packaged EXE and authenticated localhost
         run: |
           @'
@@ -107,19 +119,17 @@ jobs:
           GH_REPO: ${{ github.repository }}
         run: |
           @'
-          SteveCount rounded astronaut buddy + random personality — Minecraft 26.3, Fabric + NeoForge.
+          SteveCount offline Little Buddy voice control  -  Minecraft 26.3, Fabric + NeoForge.
 
-          Download SteveCount-Windows-Fabric.zip for Fabric Loader 0.20.1+ with Fabric API 0.166.2+26.3, or SteveCount-Windows-NeoForge.zip for NeoForge 26.3.0.102. Replace your old matching SteveCount JAR; install only one. The existing companion is compatible and is also included in the ZIP.
+          Download the matching Windows-Fabric or Windows-NeoForge ZIP. Replace BOTH the old SteveCount JAR and companion EXE. Install only one loader JAR. Fabric requires Fabric API 0.166.2+26.3 and Loader 0.20.1+; NeoForge uses 26.3.0.102.
 
-          NEW: K -> Character -> Buddy: Astronaut selects an original rounded 3D astronaut with a glossy dark visor, hoodie, blue trousers, gloves and sneakers. Supports the existing viewer label, follow movement, emotes, gift-punch animation and tiny head ride. Steve/Alex/Player/Fiishy options remain available.
+          In the companion select your microphone and click Start voice. In Minecraft press J and turn Voice commands on. Say little buddy hop on, hop off little buddy, little buddy dance, dance little buddy, wave, cheer, stop, or come here with little buddy at either end. Use F5 to see head riding.
 
-          NEW: J -> Personality / sounds controls optional random Wave/Dance/Cheer, quiet original robot-like chirps/boops/warbles, Calm/Playful timing and a separate volume slider. Calm is the default, at 20% volume. Random actions are cosmetic only: they never enable or trigger damage and never send fake gifts. Busy manual emotes and punches take priority; pauses/hiding reset the timers. Head riding remains a manual toggle. See ASTRONAUT.md.
+          Bundled English Vosk recognition works offline, with no Python, voice account or paid API needed. Microphone starts off every launch. No audio recording/uploading. Stop / mute voice in the companion stops capture; the in-game toggle controls game actions. Cosmetic commands only, never damage. Recognition is not speaker authentication; avoid loopback microphones.
 
-          Both loaders passed local disposable-world rounded-mesh, emote, head-ride, automatic action/sound-dispatch and disable checks, plus menu/punch regressions. 140 Java core assertions per loader, companion tests, packaged Windows EXE startup/authenticated localhost and ZIP integrity checks passed. Sound assets were independently decoded. No extra runtime mod dependency.
-
-          No new real paid TikTok gift verification, multiplayer/shader interoperability testing or FPS profiling. Unsigned release candidate. See TEST-REPORT.md.
+          Both loaders compiled, 148 Java assertions each, 78 Python tests, synthesized speech recognition, and disposable-world synthetic voice-action tests passed locally. Packaged EXE speech recognition and authenticated localhost smoke tests passed on this Windows runner. Fiishy's real microphone/accent/noisy live environment still needs verification. See VOICE.md and TEST-REPORT.md. Unsigned release candidate.
           '@ | Set-Content release-notes.md
-          $tag = 'v1.0.0-rc.7-build-' + $env:GITHUB_RUN_NUMBER
-          gh release create $tag dist/SteveCount-Windows-Fabric.zip dist/SteveCount-Windows-NeoForge.zip dist/SteveCount-26.3-Fabric.jar dist/SteveCount-Windows.zip dist/SteveCount-26.3-NeoForge.jar dist/SteveCount-Companion.exe dist/SteveCount-Source.zip dist/SHA256SUMS.txt --target $env:GITHUB_SHA --title "SteveCount Rounded Astronaut + Random Emotes and Sounds" --notes-file release-notes.md --prerelease
+          $tag = 'v1.0.0-rc.8-build-' + $env:GITHUB_RUN_NUMBER
+          gh release create $tag dist/SteveCount-Windows-Fabric.zip dist/SteveCount-Windows-NeoForge.zip dist/SteveCount-26.3-Fabric.jar dist/SteveCount-Windows.zip dist/SteveCount-26.3-NeoForge.jar dist/SteveCount-Companion.exe dist/SteveCount-Source.zip dist/SHA256SUMS.txt --target $env:GITHUB_SHA --title "SteveCount Little Buddy Offline Voice Commands" --notes-file release-notes.md --prerelease
           if ($LASTEXITCODE -ne 0) { throw 'Release publication failed' }
 

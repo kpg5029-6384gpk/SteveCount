@@ -9,3 +9,5 @@ diagnostics/
 **/__pycache__/
 **/.pytest_cache/
 dist/
+
+companion/voice-model/

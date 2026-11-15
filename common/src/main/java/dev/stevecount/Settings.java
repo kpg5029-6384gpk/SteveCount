@@ -21,6 +21,7 @@ public class Settings {
     public boolean characterLabel = true, characterGrounded = true;
     public volatile boolean giftPunch = false;
     public boolean characterHeadRide = false;
+    public boolean voiceControl = false;
     public boolean randomEmotes = true, buddyNoises = true;
     public float buddyVolume = .2f;
     public String buddyActivity = "Calm";

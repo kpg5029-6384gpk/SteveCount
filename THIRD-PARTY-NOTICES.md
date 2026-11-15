@@ -16,6 +16,8 @@ TikTokLive and TikTokLiveProto include modified AGPL-3.0 terms with integration 
 - attrs 26.1.0: MIT
 - betterproto2 0.9.1: MIT
 - certifi 2026.10.23: MPL-2.0
+- cffi 2.1.1: MIT-0
+- charset-normalizer 3.5.2: MIT
 - colorama 0.4.6: See bundled license files / upstream metadata
 - EulerApiSdk 0.1.0: See bundled license files / upstream metadata
 - ffmpy 1.0.0: MIT
@@ -35,6 +37,7 @@ TikTokLive and TikTokLiveProto include modified AGPL-3.0 terms with integration 
 - propcache 0.5.4: Apache-2.0
 - protobuf 7.36.2: 3-Clause BSD License
 - protobuf3-to-dict 0.1.5: Public Domain
+- pycparser 3.12: BSD-3-Clause
 - pydantic 2.14.3: MIT
 - pydantic_core 2.50.4: MIT
 - pyee 13.0.1: MIT
@@ -46,12 +49,18 @@ TikTokLive and TikTokLiveProto include modified AGPL-3.0 terms with integration 
 - python-dateutil 2.9.0.post0: Dual License
 - python-socks 3.2.1: Apache-2.0
 - pywin32-ctypes 0.2.3: BSD-3-Clause
+- requests 2.34.2: Apache-2.0
 - setuptools 84.2.1: MIT
 - six 1.17.0: MIT
+- sounddevice 0.5.3: MIT
+- srt 3.5.3: MIT
 - TikTokLive 7.0.1: Modified AGPL-3.0
 - TikTokLiveProto 0.2.2: AGPL-3.0-only
+- tqdm 4.70.1: MPL-2.0 AND MIT
 - typing-inspection 0.4.5: MIT
 - typing_extensions 4.16.0: PSF-2.0
+- urllib3 2.8.0: MIT
+- vosk 0.3.45: UNKNOWN
 - websockets 17.4: BSD-3-Clause
 - websockets_proxy 0.1.3: MIT License
 

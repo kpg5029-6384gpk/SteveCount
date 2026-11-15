@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 import secrets
 import threading
+import sys
 import tkinter as tk
 from tkinter import messagebox
 from aiohttp import web
@@ -17,7 +18,7 @@ def main():
     from service import Service
     root = tk.Tk()
     root.title('SteveCount Companion')
-    root.geometry('460x230')
+    root.geometry('520x410')
     root.resizable(False, False)
     token = secrets.token_urlsafe(32)
     service = Service(token)
@@ -47,6 +48,7 @@ def main():
     label = tk.Label(root, text='Starting localhost service…', wraplength=430)
     label.pack(pady=12)
     def close():
+        service.voice.stop()
         if stop and loop.is_running():
             loop.call_soon_threadsafe(stop.set)
         root.destroy()
@@ -59,6 +61,34 @@ def main():
             state = service.state.snapshot()
             label.config(text=f"{state['status']}  @{state['username']}\nViewers: {state['viewers'] if state['viewers'] is not None else 'Unavailable'}\n{state['message']}")
         root.after(1000, refresh)
+    from tkinter import ttk
+    tk.Label(root, text='Offline voice control — microphone stays off until Start').pack(pady=(8, 3))
+    devices = []
+    microphone = ttk.Combobox(root, state='readonly', width=62)
+    microphone.pack()
+    def refresh_devices():
+        nonlocal devices
+        try:
+            import sounddevice as sd
+            devices = [(None, 'Windows default microphone')] + [(i, d['name']) for i, d in enumerate(sd.query_devices()) if d['max_input_channels'] > 0]
+            microphone['values'] = [name for _, name in devices]
+            microphone.current(0)
+        except Exception as exc:
+            voice_label.config(text='Microphone unavailable: ' + type(exc).__name__)
+    voice_label = tk.Label(root, text='Off', wraplength=490)
+    voice_label.pack(pady=5)
+    row = tk.Frame(root)
+    row.pack()
+    tk.Button(row, text='Start voice', command=lambda: service.voice.start(devices[max(0,microphone.current())][0]) if devices else refresh_devices()).pack(side='left', padx=4)
+    tk.Button(row, text='Stop / mute voice', command=service.voice.stop).pack(side='left', padx=4)
+    tk.Button(row, text='Refresh microphones', command=refresh_devices).pack(side='left', padx=4)
+    tk.Label(root, text='Say “little buddy hop on”, “hop off little buddy”, or “dance little buddy”.\nAudio stays on this PC. Nothing is recorded or uploaded.', wraplength=490).pack(pady=8)
+    def refresh_voice():
+        state = service.voice.snapshot()
+        voice_label.config(text=state['status'] + (' | Last: ' + state['lastCommand'] if state['lastCommand'] else ''))
+        root.after(500, refresh_voice)
+    refresh_devices()
+    refresh_voice()
     tk.Button(root, text='Exit companion', command=close).pack()
     root.protocol('WM_DELETE_WINDOW', close)
     refresh()
@@ -66,6 +96,25 @@ def main():
     thread.join(timeout=5)
 
 if __name__ == '__main__':
+    if len(sys.argv)==4 and sys.argv[1]=='--voice-self-test':
+        # Explicit diagnostic mode: prerecorded file only, never opens a microphone.
+        try:
+            import wave
+            import sounddevice
+            from vosk import Model, KaldiRecognizer, SetLogLevel
+            from voice import model_path, PHRASES, parse_command
+            SetLogLevel(-1)
+            with wave.open(sys.argv[2]) as audio:
+                rec=KaldiRecognizer(Model(str(model_path())),audio.getframerate(),json.dumps([*PHRASES,'[unk]']))
+                rec.AcceptWaveform(audio.readframes(audio.getnframes()))
+                text=json.loads(rec.FinalResult()).get('text','')
+            command=parse_command(text)
+            assert command=='head_on', 'Speech fixture was not recognized'
+            Path(sys.argv[3]).write_text(json.dumps({'passed':True,'command':command}),encoding='utf-8')
+        except Exception as exc:
+            Path(sys.argv[3]).write_text(json.dumps({'passed':False,'error':str(exc)}),encoding='utf-8')
+            sys.exit(1)
+        sys.exit(0)
     try:
         main()
     except Exception:

@@ -7,6 +7,21 @@ public final class CoreChecks {
     static int checks;
     static void check(boolean ok,String message) {checks++;if(!ok)throw new AssertionError(message);}
     public static void main(String[] args) throws Exception {
+        var voice=new VoiceCursor();
+        var vf=com.google.gson.JsonParser.parseString("{\"session\":\"a\",\"sequence\":0,\"events\":[]}").getAsJsonObject();
+        check(voice.accept(vf,100,true).isEmpty(),"New voice sessions baseline");
+        vf.addProperty("sequence",1);
+        vf.add("events",com.google.gson.JsonParser.parseString("[{\"sequence\":1,\"created\":100,\"command\":\"head_on\"}]").getAsJsonArray());
+        check(voice.accept(vf,101,true).equals("head_on"),"Fresh head ride command");
+        check(voice.accept(vf,101,true).isEmpty(),"Voice commands never repeat per tick");
+        vf.addProperty("sequence",2);vf.getAsJsonArray("events").get(0).getAsJsonObject().addProperty("sequence",2);
+        check(voice.accept(vf,101,false).isEmpty() && voice.accept(vf,101,true).isEmpty(),"Disabled or paused speech is consumed");
+        vf.addProperty("sequence",3);vf.getAsJsonArray("events").get(0).getAsJsonObject().addProperty("sequence",3);
+        check(voice.accept(vf,110,true).isEmpty(),"Expired voice commands discarded");
+        vf.addProperty("sequence",4);var ve=vf.getAsJsonArray("events").get(0).getAsJsonObject();ve.addProperty("sequence",4);ve.addProperty("created",110);ve.addProperty("command","punch");
+        check(voice.accept(vf,110,true).isEmpty(),"Speech cannot trigger damage");
+        check(voice.accept(new com.google.gson.JsonObject(),110,true).isEmpty(),"Malformed voice feed harmless");
+        check(!new Settings().voiceControl,"Microphone commands opt in");
         var schedule=new BuddySchedule(new java.util.Random(42));
         check(schedule.tick(1000,true,true,true,true,false,false)==0,"Random activity starts with a delay");
         check(schedule.nextEmote>=36000 && schedule.nextEmote<=76000 && schedule.nextNoise>=51000 && schedule.nextNoise<=101000,"Calm random intervals bounded");

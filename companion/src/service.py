@@ -5,6 +5,7 @@ from aiohttp import web
 from TikTokLive import TikTokLiveClient
 from TikTokLive.events import ConnectEvent, RoomUserSeqEvent, LiveEndEvent, GiftEvent
 from gifts import Gifts
+from voice import Voice
 from TikTokLive.client.errors import UserOfflineError
 from core import State, normalize, backoff
 
@@ -17,6 +18,7 @@ class Service:
         self.task = None
         self.client = None
         self.gifts = Gifts()
+        self.voice = Voice()
 
     async def stop(self):
         if self.client:
@@ -96,7 +98,7 @@ class Service:
             return await handler(request)
         app = web.Application(middlewares=[security], client_max_size=2048)
         async def status(request):
-            return web.json_response({**self.state.snapshot(), 'gifts': self.gifts.snapshot()})
+            return web.json_response({**self.state.snapshot(), 'gifts': self.gifts.snapshot(), 'voice': self.voice.snapshot()})
         async def control(request):
             try:
                 data = await request.json()
@@ -115,6 +117,7 @@ class Service:
         app.router.add_get('/status', status)
         app.router.add_post('/control', control)
         async def cleanup(app):
+            self.voice.stop()
             await self.stop()
         app.on_cleanup.append(cleanup)
         return app
