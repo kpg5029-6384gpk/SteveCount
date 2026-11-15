@@ -21,6 +21,8 @@ public class Settings {
     public boolean characterLabel = true, characterGrounded = true;
     public volatile boolean giftPunch = false;
     public boolean characterHeadRide = false;
+    public float headRideScale = .18f;
+    public volatile boolean streamerMode = true;
     public volatile boolean voiceControl = false;
     public boolean randomEmotes = true, buddyNoises = true;
     public float buddyVolume = .2f;
@@ -41,9 +43,11 @@ public class Settings {
         buddyVolume=Float.isFinite(buddyVolume)?Math.clamp(buddyVolume,0,1):.2f;
         if(!java.util.List.of("Calm","Playful").contains(buddyActivity))buddyActivity="Calm";
         characterScale=Float.isFinite(characterScale)?Math.clamp(characterScale,.25f,1f):.55f;
+        headRideScale=Float.isFinite(headRideScale)?Math.clamp(headRideScale,.08f,.60f):.18f;
         followDistance=Float.isFinite(followDistance)?Math.clamp(followDistance,1.5f,6f):2.5f;
     }
-    boolean showHud() { return !"Character".equals(displayMode); }
+    boolean showHud() { return streamerMode && !"Character".equals(displayMode); }
+    boolean showCountLabel() { return streamerMode && characterLabel; }
     boolean showCharacter() { return !"HUD".equals(displayMode); }
     void resetHudAppearance() {
         preset="Compact";icon="Steve";scale=1;opacity=.65f;x=y=0;offsetX=offsetY=8;

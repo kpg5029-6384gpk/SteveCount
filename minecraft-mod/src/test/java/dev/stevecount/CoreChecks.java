@@ -7,6 +7,16 @@ public final class CoreChecks {
     static int checks;
     static void check(boolean ok,String message) {checks++;if(!ok)throw new AssertionError(message);}
     public static void main(String[] args) throws Exception {
+        var buddyOptions=new Settings();
+        check(buddyOptions.streamerMode && buddyOptions.headRideScale==.18f,"Existing profiles retain streamer mode and original rider size");
+        buddyOptions.headRideScale=Float.NaN;buddyOptions.validate();check(buddyOptions.headRideScale==.18f,"Nonfinite rider size recovers");
+        buddyOptions.headRideScale=0;buddyOptions.validate();check(buddyOptions.headRideScale==.08f,"Minimum rider size");
+        buddyOptions.headRideScale=99;buddyOptions.validate();check(buddyOptions.headRideScale==.6f,"Maximum rider size");
+        buddyOptions.displayMode="Both";buddyOptions.streamerMode=false;
+        check(buddyOptions.showCharacter() && !buddyOptions.showHud() && !buddyOptions.showCountLabel(),"Regular mode keeps character and suppresses stream displays");
+        buddyOptions.streamerMode=true;
+        check(buddyOptions.showHud() && buddyOptions.showCountLabel(),"Streamer mode restores stream displays");
+        buddyOptions.characterLabel=false;check(!buddyOptions.showCountLabel(),"Streamer mode respects label preference");
         var voice=new VoiceCursor();
         var vf=com.google.gson.JsonParser.parseString("{\"session\":\"a\",\"sequence\":0,\"events\":[]}").getAsJsonObject();
         check(voice.accept(vf,100,true).isEmpty(),"New voice sessions baseline");
@@ -105,6 +115,9 @@ public final class CoreChecks {
             Settings.configDirectory=directory;
             config.displayMode="Both";config.characterSkin="Fiishy";config.characterHeadRide=true;config.characterScale=.4f;config.followDistance=4;config.giftPunch=true;
             config.save();
+            var customBuddy=Settings.load();customBuddy.headRideScale=.42f;customBuddy.streamerMode=false;customBuddy.save();
+            var customReread=Settings.load();
+            check(customReread.headRideScale==.42f && !customReread.streamerMode,"Rider scale and mode survive restart");
             var saved=Settings.load();
             var personality=Settings.load();personality.characterSkin="Astronaut";personality.randomEmotes=false;personality.buddyNoises=false;personality.buddyVolume=.17f;personality.buddyActivity="Playful";personality.save();
             var reread=Settings.load();

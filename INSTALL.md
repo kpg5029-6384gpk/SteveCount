@@ -24,3 +24,6 @@ To uninstall, close the companion and remove SteveCount's JAR and extracted fold
 
 ## Optional offline voice commands
 Replace both the JAR and companion for this update. In the companion select your microphone and Start voice. In Minecraft press J and enable Voice commands. Say “little buddy hop on”, “hop off little buddy”, or “dance little buddy”. Voice starts off each companion launch. Stop / mute voice stops microphone capture. See [VOICE.md](VOICE.md) for commands, privacy and troubleshooting.
+
+## Regular mode and adjustable head rider
+Press **J > Buddy options** (or K > Character > Buddy options). The head-riding size slider changes the seated buddy from 8% to 60%, separately from ground size. **Regular** keeps the buddy without viewer HUD/status labels, milestones or TikTok gift damage; **Streamer** restores stream displays. Both settings persist. See [BUDDY-MODES.md](BUDDY-MODES.md). This update needs only the matching new JAR; the offline-voice companion remains compatible.

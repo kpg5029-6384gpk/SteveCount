@@ -10,12 +10,12 @@ This is the exact 64x64 skin image from the user-selected [NameMC skin b80874f06
 
 For the rounded non-player model, choose **K → Character → Buddy: Astronaut**. The same emotes and head ride apply. **Personality / sounds** provides optional automatic emotes, noises and volume controls; see [ASTRONAUT.md](ASTRONAUT.md).
 
-Press **J** while playing, or open **K → Character → Emotes / Head ride**. J is reassignable under Minecraft Controls.
+Press **J** while playing, or open **K → Character → Buddy options → Emotes / Voice commands**. J is reassignable under Minecraft Controls.
 
 - **Wave:** raises and waves one arm for four seconds.
 - **Dance:** alternating arms/legs with a body sway for six seconds.
 - **Cheer:** raises both arms and bounces for four seconds.
-- **Tiny head rider:** shrinks the buddy to 18% avatar size and seats it on the top of your head. This is a toggle; it remains there as you move, until you turn it off or choose Return to ground.
+- **Tiny head rider:** uses a separately adjustable avatar scale (18% by default; J > Buddy options) and seats it on the top of your head. This is a toggle; it remains there as you move, until you turn it off or choose Return to ground.
 - **Stop emote / Return to ground:** ends the emote and restores the ordinary follower.
 - **Recall:** resets the follower's route near you.
 

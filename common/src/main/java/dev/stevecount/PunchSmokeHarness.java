@@ -117,6 +117,25 @@ final class PunchSmokeHarness {
             SteveCount.settings.voiceControl=false;SteveCount.bridge.voice=new com.google.gson.JsonObject();
             LogUtils.getLogger().info("SteveCount voice world QA PASSED: synthetic action feed, head on/off, dance, stop, disabled replay rejection. No microphone capture.");
         }
+        if(tick==1290) {
+            SteveCount.settings.headRideScale=.42f;SteveCount.settings.characterHeadRide=true;
+            mc.options.setCameraType(net.minecraft.client.CameraType.THIRD_PERSON_FRONT);
+        }
+        if(tick==1295) {
+            check(FollowerCharacter.lastSmokeState.headRide && FollowerCharacter.lastSmokeState.scale==.42f,"Adjusted head-riding scale rendered");
+            capture("adjustable-head-ride");
+            SteveCount.settings.characterHeadRide=false;SteveCount.settings.streamerMode=false;
+            mc.options.setCameraType(net.minecraft.client.CameraType.FIRST_PERSON);
+            var d=FollowerCharacter.trail.position.add(0,.7,0).subtract(mc.player.getEyePosition());
+            mc.player.setYRot((float)Math.toDegrees(Math.atan2(-d.x,d.z)));
+            mc.player.setXRot((float)-Math.toDegrees(Math.atan2(d.y,Math.sqrt(d.x*d.x+d.z*d.z))));
+        }
+        if(tick==1300) {
+            check(FollowerCharacter.lastSmokeState.nameTag==null && SteveCount.settings.showCharacter() && !SteveCount.settings.showHud(),"Regular mode renders buddy without stream labels or HUD");
+            capture("regular-buddy-mode");
+            mc.gui.setScreen(new BuddyOptionsScreen(null));
+        }
+        if(tick==1305) {capture("buddy-options");mc.gui.setScreen(null);SteveCount.settings.streamerMode=true;SteveCount.settings.headRideScale=.18f;}
         if(tick==1310)server.execute(()->{
             var p=server.getPlayerList().getPlayer(id);p.setHealth(.5f);
             GiftPunch.attack(p,p.position().add(0,0,1));check(!p.isAlive(),"No artificial half-heart survival floor");

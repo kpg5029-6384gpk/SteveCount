@@ -26,7 +26,7 @@ public final class SteveCount {
         settings=Settings.load(); bridge=new Bridge();
         key=new KeyMapping("key.stevecount.settings",75,KeyMapping.Category.MISC);
         emoteKey=new KeyMapping("key.stevecount.emotes",74,KeyMapping.Category.MISC);
-        if(settings.autoConnect && !settings.username.isBlank()) bridge.control("connect",settings.username);
+        if(settings.streamerMode && settings.autoConnect && !settings.username.isBlank()) bridge.control("connect",settings.username);
     }
     static void open() { var mc=Minecraft.getInstance();mc.gui.setScreen(new SettingsScreen(mc.gui.screen())); }
     static Bridge.Snapshot current() {
@@ -50,6 +50,7 @@ public final class SteveCount {
         long now=System.currentTimeMillis();
         if(demo && automatic && now-lastDemo>2000) {lastDemo=now;changeDemo(demoCount+new Random().nextInt(-8,13));}
         var s=current();
+        if(!settings.streamerMode)return;
         String id=(demo?"demo:":"live:")+s.username()+":"+s.room();
         if(!id.equals(session)) {reached.clear();session=id;}
         if(s.viewers()==null || s.stale() || !(s.status().equals("Live") || demoStatus.equals(s.status()) && demo)) return;

@@ -20,7 +20,7 @@ final class GiftPunch {
         var mc=Minecraft.getInstance();
         if(level!=mc.level) {level=mc.level;readyTicks=0;animationStart=0;pending.clear();}
         boolean eligible=mc.player!=null && mc.player.isAlive() && mc.getSingleplayerServer()!=null
-            && SteveCount.settings.giftPunch
+            && SteveCount.settings.giftPunch && SteveCount.settings.streamerMode
             && SteveCount.settings.showCharacter() && !SteveCount.demo
             && SteveCount.bridge.snapshot.status().equals("Live");
         readyTicks=eligible?readyTicks+1:0;
@@ -44,7 +44,7 @@ final class GiftPunch {
         animationStart=System.currentTimeMillis();
         server.execute(()->{
             var target=server.getPlayerList().getPlayer(uuid);
-            if(target==null || !target.isAlive() || target.level().dimension()!=dimension || !SteveCount.settings.giftPunch)return;
+            if(target==null || !target.isAlive() || target.level().dimension()!=dimension || !SteveCount.settings.giftPunch || !SteveCount.settings.streamerMode)return;
             attack(target,from);
         });
     }

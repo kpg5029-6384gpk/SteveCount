@@ -76,3 +76,6 @@ Optional omissions: automatic companion launching, arbitrary remote custom head 
 
 ## Offline voice update
 148 Java core assertions per loader; 78 Python tests. Vosk decoded synthesized English “little buddy hop on” into head_on using the bundled model. Both loaders tested in disposable worlds using synthetic voice feeds: head on/off, dance, stop, disabled replay rejection. No microphone was opened during these tests. Actual microphone capture, Fiishy’s accent and stream background noise remain unverified. The Windows workflow separately tests the packaged recognition libraries/model with synthesized speech and the localhost service.
+
+## Adjustable head rider and Regular mode
+156 Java core assertions per loader cover size limits/nonfinite recovery, saved settings, Streamer display restoration and Regular display suppression. Both loaders verified in disposable worlds: custom 42% head-rider render scale, no name tag/HUD in Regular, options screen capture, and existing cosmetic/voice/combat regressions. No new paid gift/live TikTok tests; companion unchanged.

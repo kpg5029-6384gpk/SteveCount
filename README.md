@@ -1,8 +1,8 @@
 # SteveCount
 
-**Rounded astronaut and random personality:** choose **K → Character → Buddy: Astronaut** for the new non-blocky model. **J → Personality / sounds** controls random Wave/Dance/Cheer, quiet robot noises, Calm/Playful timing and volume. These are cosmetic and work offline. See [ASTRONAUT.md](ASTRONAUT.md).
+**Rounded astronaut and random personality:** choose **K → Character → Buddy: Astronaut** for the new non-blocky model. **J → Buddy options → Personality / sounds** controls random Wave/Dance/Cheer, quiet robot noises, Calm/Playful timing and volume. These are cosmetic and work offline. See [ASTRONAUT.md](ASTRONAUT.md).
 
-**Menu fix, Fiishy skin and emotes:** gift punches now work in inventory/non-pausing menus; true pause retains one expiring punch for resume. Select **K → Character → Buddy: Fiishy** for the linked skin. Press **J**, or choose **Emotes / Head ride**, for Wave, Dance, Cheer and the tiny head rider. See [EMOTES.md](EMOTES.md).
+**Menu fix, Fiishy skin and emotes:** gift punches now work in inventory/non-pausing menus; true pause retains one expiring punch for resume. Select **K → Character → Buddy: Fiishy** for the linked skin. Press **J**, or choose **Buddy options > Emotes / Voice commands**, for Wave, Dance, Cheer and the tiny head rider. See [EMOTES.md](EMOTES.md).
 
 **Optional 100-coin Hand Heart punch:** in single-player, enable **Character → Gift damage** to have the buddy perform one ordinary fist attack per accepted gift. Unarmored damage is half a heart; vanilla armor and immunity apply. Five-second cooldown, no queued hits, off by default. Can kill in hardcore. Update both the JAR and EXE. See [GIFTS.md](GIFTS.md).
 
@@ -69,3 +69,6 @@ See INSTALL.md, TROUBLESHOOTING.md, DEVELOPMENT.md and TEST-REPORT.md.
 
 ## Optional offline voice commands
 Replace both the JAR and companion for this update. In the companion select your microphone and Start voice. In Minecraft press J and enable Voice commands. Say “little buddy hop on”, “hop off little buddy”, or “dance little buddy”. Voice starts off each companion launch. Stop / mute voice stops microphone capture. See [VOICE.md](VOICE.md) for commands, privacy and troubleshooting.
+
+## Regular mode and adjustable head rider
+Press **J > Buddy options** (or K > Character > Buddy options). The head-riding size slider changes the seated buddy from 8% to 60%, separately from ground size. **Regular** keeps the buddy without viewer HUD/status labels, milestones or TikTok gift damage; **Streamer** restores stream displays. Both settings persist. See [BUDDY-MODES.md](BUDDY-MODES.md). This update needs only the matching new JAR; the offline-voice companion remains compatible.

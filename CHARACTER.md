@@ -16,7 +16,7 @@ Press **F5** for a third-person view. In first person, a character following beh
 
 The character follows your recent movement route, animates its arms/legs, and looks toward you. Grounded mode samples nearby blocks to keep its feet near the ground; turn it off for a hovering follower. It catches up after a large teleport and resets when you disconnect or change dimensions. F1 hides it with the HUD.
 
-Press **J** or choose **Emotes / Head ride** for Wave, Dance, Cheer and the tiny head-riding toggle. Recall is now in that screen. See [EMOTES.md](EMOTES.md).
+Press **J** or choose **Buddy options > Emotes / Voice commands** for Wave, Dance, Cheer and the tiny head-riding toggle. Recall is now in that screen. See [EMOTES.md](EMOTES.md).
 
 ## Counts and testing
 

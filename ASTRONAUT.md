@@ -8,7 +8,7 @@ It follows the same route as the other buddies and supports viewer labels, Wave,
 
 ## Random emotes and noises
 
-Press **J → Personality / sounds**, or **K → Character → Emotes / Head ride → Personality / sounds**.
+Press **J → Buddy options → Personality / sounds**, or **K → Character → Buddy options → Personality / sounds**.
 
 - **Random emotes:** occasionally chooses Wave, Dance or Cheer. Manual emotes and gift punches take priority.
 - **Random noises:** occasional short original robot-like chirps, boops and warbles. No speech, recordings or external sound services are used.

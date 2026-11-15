@@ -21,7 +21,7 @@ public final class EmoteScreen extends Screen {
             c.save();rebuildWidgets();
         });
         button("Stop emote / Return to ground",136,()->{BuddyEmotes.stop();BuddyPersonality.rest();SteveCount.settings.characterHeadRide=false;SteveCount.settings.save();rebuildWidgets();});
-        addRenderableWidget(Button.builder(Component.literal("Personality / sounds"),b->minecraft.gui.setScreen(new PersonalityScreen(this))).bounds((width-300)/2,160,194,20).build());
+        addRenderableWidget(Button.builder(Component.literal("Buddy options"),b->minecraft.gui.setScreen(new BuddyOptionsScreen(this))).bounds((width-300)/2,160,194,20).build());
         addRenderableWidget(Button.builder(Component.literal("Recall"),b->FollowerCharacter.recall()).bounds((width-300)/2+202,160,98,20).build());
         button("Voice commands: "+SteveCount.settings.voiceControl,184,()->{SteveCount.settings.voiceControl=!SteveCount.settings.voiceControl;SteveCount.settings.save();rebuildWidgets();});
         button("Done",height-26,this::onClose);

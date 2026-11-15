@@ -26,8 +26,8 @@ public final class SettingsScreen extends Screen {
         if(tab==0) {
             input=addRenderableWidget(new EditBox(font,left,y,320,20,Component.literal("TikTok username or LIVE URL")));
             input.setMaxLength(512);input.setHint(Component.literal("@username or TikTok LIVE URL"));input.setValue(c.username);input.setResponder(v->c.username=v);y+=26;
-            row("Connect",()->{SteveCount.demo(false);c.save();SteveCount.bridge.control("connect",c.username);},"Disconnect",()->{SteveCount.demo(false);SteveCount.bridge.control("disconnect","");});
-            row("Reconnect",()->{SteveCount.demo(false);SteveCount.bridge.control("connect",c.username);},"Auto-connect: "+c.autoConnect,()->{c.autoConnect=!c.autoConnect;refresh();});
+            row("Connect",()->{SteveCount.demo(false);c.streamerMode=true;c.save();SteveCount.bridge.control("connect",c.username);},"Disconnect",()->{SteveCount.demo(false);SteveCount.bridge.control("disconnect","");});
+            row("Reconnect",()->{SteveCount.demo(false);c.streamerMode=true;c.save();SteveCount.bridge.control("connect",c.username);},"Auto-connect: "+c.autoConnect,()->{c.autoConnect=!c.autoConnect;refresh();});
             y+=52;
             button("Move HUD / preview",left,y,320,()->minecraft.gui.setScreen(new MoveScreen(this)));
         } else if(tab==1) {
@@ -51,7 +51,7 @@ public final class SettingsScreen extends Screen {
             slider("Character size",.25,1,c.characterScale,v->c.characterScale=(float)v);
             slider("Follow distance",1.5,6,c.followDistance,v->c.followDistance=(float)v);
             row("Count label: "+c.characterLabel,()->{c.characterLabel=!c.characterLabel;refresh();},"Grounded: "+c.characterGrounded,()->{c.characterGrounded=!c.characterGrounded;refresh();});
-            row("Emotes / Head ride",()->minecraft.gui.setScreen(new EmoteScreen(this)),"Reset character",()->{c.displayMode="HUD";c.characterSkin="Steve";c.characterScale=.55f;c.followDistance=2.5f;c.characterLabel=c.characterGrounded=true;c.characterHeadRide=false;c.giftPunch=false;BuddyEmotes.stop();FollowerCharacter.recall();refresh();});
+            row("Buddy options",()->minecraft.gui.setScreen(new BuddyOptionsScreen(this)),"Reset character",()->{c.displayMode="HUD";c.characterSkin="Steve";c.characterScale=.55f;c.followDistance=2.5f;c.characterLabel=c.characterGrounded=true;c.characterHeadRide=false;c.headRideScale=.18f;c.giftPunch=false;BuddyEmotes.stop();FollowerCharacter.recall();refresh();});
             row("Gift damage: "+c.giftPunch,()->{c.giftPunch=!c.giftPunch;c.save();refresh();},"Preview punch (no damage)",GiftPunch::preview);
         } else {
             row("Animations: "+c.animations,()->{c.animations=!c.animations;refresh();},"Milestone sound: "+c.sound,()->{c.sound=!c.sound;refresh();});

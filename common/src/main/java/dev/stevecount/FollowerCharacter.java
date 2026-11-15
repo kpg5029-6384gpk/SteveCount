@@ -97,7 +97,7 @@ final class FollowerCharacter {
         boolean punching=c.animations && punch>=0 && punch<1;
         boolean riding=c.characterHeadRide && !punching;
         if(riding && mc.options.getCameraType().isFirstPerson())return;
-        float size=riding?.18f:c.characterScale;
+        float size=riding?c.headRideScale:c.characterScale;
         String emote=punching?"None":BuddyEmotes.current(now);
         if(riding)pos=mc.player.getPosition(partial).add(0,mc.player.getBbHeight()-.12,0);
         if(emote.equals("Cheer") && !riding)pos=pos.add(0,Math.abs(Math.sin(BuddyEmotes.elapsed(now)*7))*.2,0);
@@ -130,7 +130,7 @@ final class FollowerCharacter {
         state.distanceToCameraSq=world.cameraRenderState.pos.distanceToSqr(pos);
         var lightPos=BlockPos.containing(pos.add(0,.7,0));
         state.lightCoords=LightCoordsUtil.pack(level.getBrightness(LightLayer.BLOCK,lightPos),level.getBrightness(LightLayer.SKY,lightPos));
-        if(c.characterLabel && !riding) {
+        if(c.showCountLabel() && !riding) {
             var snapshot=SteveCount.current();
             boolean stale=snapshot.stale() || !SteveCount.demo && System.currentTimeMillis()/1000d-snapshot.updated()>60;
             int color=SteveCount.demo?0x7FFFD4:stale?0xFFC267:0xFFFFFF;
