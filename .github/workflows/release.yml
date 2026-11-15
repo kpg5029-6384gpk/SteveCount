@@ -48,11 +48,7 @@ jobs:
         run: .\companion\build-windows.ps1
       - name: Test packaged offline speech recognition
         run: |
-          Add-Type -AssemblyName System.Speech
-          $speaker = New-Object System.Speech.Synthesis.SpeechSynthesizer
-          $speaker.SetOutputToWaveFile((Join-Path (Get-Location) 'voice-fixture.wav'))
-          $speaker.Speak('little buddy hop on.')
-          $speaker.Dispose()
+          Copy-Item companion/tests/fixtures/head-on.wav voice-fixture.wav
           $proc = Start-Process -FilePath dist/SteveCount-Companion.exe -ArgumentList '--voice-self-test voice-fixture.wav voice-result.json' -WindowStyle Hidden -PassThru
           if (-not $proc.WaitForExit(60000)) { $proc.Kill(); throw 'Voice self test timed out' }
           if ($proc.ExitCode -ne 0) { throw 'Packaged voice self test failed' }

@@ -32,12 +32,18 @@ def test_feed_cooldown_mute_and_bounded_history():
     assert not v.recognized('little buddy dance')
     assert v.snapshot()['events']==[]
 
-def test_missing_microphone_does_not_crash(monkeypatch):
+def test_missing_microphone_does_not_crash(monkeypatch, tmp_path):
     import sounddevice
+    import voice
+    import vosk
+    (tmp_path/'am').mkdir()
+    (tmp_path/'am/final.mdl').touch()
+    monkeypatch.setattr(voice,'model_path',lambda:tmp_path)
+    monkeypatch.setattr(vosk,'Model',lambda *args:object())
     monkeypatch.setattr(sounddevice,'query_devices',lambda *a: (_ for _ in ()).throw(RuntimeError('No microphone')))
     v=Voice()
     v._listen(None)
-    assert 'Voice unavailable' in v.snapshot()['status']
+    assert 'No microphone' in v.snapshot()['status']
     # Muting while the model loads must not subsequently open the microphone.
     import vosk
     muted=Voice()
