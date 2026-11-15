@@ -38,3 +38,12 @@ def test_missing_microphone_does_not_crash(monkeypatch):
     v=Voice()
     v._listen(None)
     assert 'Voice unavailable' in v.snapshot()['status']
+    # Muting while the model loads must not subsequently open the microphone.
+    import vosk
+    muted=Voice()
+    def loading_model(*args):
+        muted.stop()
+        return object()
+    monkeypatch.setattr(vosk,'Model',loading_model)
+    muted._listen(None)
+    assert muted.snapshot()['status']=='Off'

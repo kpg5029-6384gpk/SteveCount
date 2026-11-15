@@ -87,6 +87,8 @@ class Voice:
             if not (path/'am/final.mdl').is_file():
                 raise RuntimeError('Bundled English voice model missing; reinstall the full companion')
             model = Model(str(path))  # Explicit path: never auto-download a model.
+            if self.stop_event.is_set():
+                return
             rate = int(sd.query_devices(device, 'input')['default_samplerate'])
             recognizer = KaldiRecognizer(model, rate, json.dumps([*PHRASES, '[unk]']))
             chunks = queue.Queue(maxsize=16)
@@ -97,6 +99,8 @@ class Voice:
                         except queue.Empty: break
                 try: chunks.put_nowait(bytes(data))
                 except queue.Full: pass
+            if self.stop_event.is_set():
+                return
             with sd.RawInputStream(samplerate=rate, blocksize=max(800,rate//5), device=device,
                                    channels=1, dtype='int16', callback=callback):
                 with self.lock:
