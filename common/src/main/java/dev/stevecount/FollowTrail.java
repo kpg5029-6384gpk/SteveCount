@@ -29,6 +29,9 @@ final class FollowTrail {
         return from.add(Math.sin(radians)*remaining,0,-Math.cos(radians)*remaining);
     }
     Vec3 propose(Vec3 player,Vec3 target) {
+        return propose(player,target,.24);
+    }
+    Vec3 propose(Vec3 player,Vec3 target,double pace) {
         previous=position;
         previousYaw=yaw;
         if(position==null || position.distanceToSqr(player)>256 || Math.abs(position.y-player.y)>8 || blocked>30) {
@@ -38,7 +41,7 @@ final class FollowTrail {
         Vec3 delta=target.subtract(position);
         double distance=delta.length();
         if(distance<.12) {speed*=.6f;return position;}
-        double step=Math.min(distance, distance>5?.42:.24);
+        double step=Math.min(distance, distance>5?.42:pace);
         return position.add(delta.scale(step/distance));
     }
     void accept(Vec3 next) {

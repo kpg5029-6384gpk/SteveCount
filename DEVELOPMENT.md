@@ -75,3 +75,10 @@ Three original synthesized Oggs and the model's white vertex-color texture are c
 
 ## Optional Player Emotes QA
 Install the official matching 2.0.3 JAR only in the development instance run/mods directory. Use `runClient -PstevecountPlayerEmotesSmoke` for disposable-world animation QA. `runClient -PstevecountSmoke` also captures the optional library and, when installed, the native upstream preview library. Run the latter again without the optional JAR to verify fallback. Do not include upstream assets or test dependencies in distribution archives. The adapter reflects verified public 2.0.3 methods so the normal compile/runtime classpath has no required dependency.
+
+
+Held outfit QA: `-PstevecountCostumeSmoke` creates a fresh disposable world, uses
+synthetic cosmetic gift feeds and the approved bundled PNG, and checks 1000+ activation,
+reset/999 rejection, self-only rendering, first-person arms, wide/slim variants,
+Survival inventory, armor retention, expiry and disabling. Never enable development
+smoke flags in an existing player world. Normal installs do not activate them.

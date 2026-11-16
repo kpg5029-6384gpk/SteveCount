@@ -14,6 +14,7 @@ final class Bridge {
     }
     volatile Snapshot snapshot = Snapshot.empty("Not Configured", "");
     volatile JsonObject gifts = new JsonObject();
+    volatile JsonObject costumes = new JsonObject();
     volatile JsonObject voice = new JsonObject();
     private final ScheduledExecutorService worker = Executors.newSingleThreadScheduledExecutor(r -> { var t=new Thread(r,"SteveCount bridge");t.setDaemon(true);return t; });
     private final HttpClient http = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(2)).build();
@@ -39,6 +40,7 @@ final class Bridge {
             if(count!=null && count<0) throw new IllegalArgumentException("Invalid count");
             snapshot=new Snapshot(j.get("status").getAsString(),count,j.get("peak").getAsLong(),j.get("updated").getAsDouble(),j.get("stale").getAsBoolean(),j.get("message").getAsString(),j.get("username").getAsString(),j.get("room").getAsString());
             voice=j.has("voice")?j.getAsJsonObject("voice"):new JsonObject();
+            costumes=j.has("costumes")?j.getAsJsonObject("costumes"):new JsonObject();
             gifts=j.has("gifts")?j.getAsJsonObject("gifts"):new JsonObject();
         } catch(Exception ex) {
             voice=new JsonObject();
@@ -49,7 +51,7 @@ final class Bridge {
     }
     void control(String action, String username) {
         enabled=false;
-        gifts=new JsonObject();
+        gifts=new JsonObject();costumes=new JsonObject();
         snapshot=Snapshot.empty(action.equals("connect")?"Connecting":"Disconnected","");
         worker.execute(() -> {
             try { var j=new JsonObject();j.addProperty("action",action);j.addProperty("username",username); request("control",j.toString()); }

@@ -1,5 +1,34 @@
 # SteveCount verification report — 2026-11-12
 
+## Combined release publication — 2026-11-15
+
+The user authorized publication of the previously held wandering and timed outfit
+builds. The following held-build sections describe the local verification performed
+before publication; their historical hold statements no longer describe release
+status. The release workflow rebuilds both loaders and the Windows companion,
+runs core/Python checks, validates packaged recognition/authenticated status and
+installation ZIPs before publishing. Local Minecraft tests used synthetic gifts;
+no developer-run paid TikTok gift is claimed.
+
+
+## Timed maid outfit — held local build, 2026-11-15
+
+- The user approved the 8onfire design and supplied its original PNG. The original 64 x 64 asset is bundled and credited in COSTUME-NOTICE.md. It was visually reviewed on native wide and slim player models. The player's original head is preserved; Little Buddy and other player states are excluded.
+- Both loaders compiled with **12,260 core assertions each**. New tests cover the exact 30-minute deadline, elapsed time while paused/closed, expiry, wearer isolation, timer reset without stacking, serialization, fresh/duplicate/disabled/stale/malformed cosmetic feeds and rejecting invalid PNG headers before native decoding.
+- **87 Python tests passed**, including an actual installed-library GiftEvent with ExtendedGift.diamond_count=1000, 999/bool/string/unknown rejection, deduplication, completed streak semantics, separate costume/punch feeds and authenticated status communication. Tests are synthetic and do not represent paid TikTok gifts.
+- Disposable Minecraft worlds on both loaders verified actual costume rendering, 1000+/5000 timer activation/reset, 999 rejection, other-player/Buddy exclusion, original head retention, first-person arms, wide/slim variants, expiry and immediate disabling. The Survival inventory/real armor scenario was checked in the final run. Armor is hidden in render-state copies only; the entity's actual equipped item remains unchanged.
+- The rebuilt standalone Windows companion passed startup and authenticated localhost status checks with separate cosmetic/punch sessions, using an isolated temporary profile. No real TikTok connection or paid-gift test is claimed. No full custom-avatar/shader compatibility or performance profiling was performed.
+- The combined wandering/outfit JARs, new EXE, source and installation ZIPs are staged in `dist/held-outfit/`. Nothing was pushed to GitHub, published, or installed into a normal gameplay profile. Timer reset behavior is a fresh 30 minutes for each qualifying gift; the real-time deadline persists across restarts.
+
+
+## Wandering — local unreleased build, held 2026-11-15
+
+- Both Fabric and NeoForge builds passed with **12,244 core assertions each**. These include 4,000-tick idle and 4,000-tick sprint simulations, destination/position bounds, rest intervals, near/far choices, both sides/ahead/behind coverage, teleport/radius changes, blocked-goal reset and configuration migration/persistence.
+- Dedicated real disposable-world wandering tests passed on both loaders: idle travel (Fabric 16.08 blocks; NeoForge 18.36 blocks), changing distance within the 3-block test radius, body clearance, moving catch-up, planted manual dance, attached head ride, actual pause and classic follow fallback. Screenshots captured for visual review. The smoke tests run with automatic emotes/noises disabled to isolate movement.
+- The planner runs on client ticks, uses no external service and creates no world entity. Ground checks retain lightweight local collision steering; this is not full mob pathfinding. Dense mazes, shader packs and long multiplayer sessions have not been separately tested. The optional Player Emotes integration and companion protocol were unchanged in this update.
+- **Held locally at the user's request. No GitHub push, release, normal-profile installation or public download update was made.** Both compiled JARs are staged under `dist/held-wandering/` for the next feature discussion. No companion replacement is needed for wandering.
+
+
 ## Head attachment and voice library actions — 2026-11-15
 
 - The rider is submitted at the owning avatar's actual rendered head transform, not body height. It follows pitch/yaw and the renderer's crouch/flight transforms. Its seated contact offset scales with the model. Native player states carry only a per-frame attachment, cleared at extraction; no entity or world data is created.

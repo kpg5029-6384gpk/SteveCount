@@ -13,7 +13,11 @@ async def test_http_security_and_control():
     s=Service('secret')
     async with TestClient(TestServer(s.app())) as client:
         headers={'Host':'127.0.0.1:18763','Authorization':'Bearer secret'}
-        assert (await client.get('/status',headers=headers)).status==200
+        response=await client.get('/status',headers=headers)
+        assert response.status==200
+        status=await response.json()
+        assert 'costumes' in status and 'gifts' in status
+        assert status['costumes']['session']!=status['gifts']['session']
         assert (await client.get('/status',headers={'Host':'127.0.0.1:18763'})).status==401
         assert (await client.get('/status',headers={**headers,'Origin':'https://evil.example'})).status==403
         assert (await client.get('/status',headers={**headers,'Host':'evil.example'})).status==403

@@ -18,6 +18,7 @@ class Service:
         self.task = None
         self.client = None
         self.gifts = Gifts()
+        self.costumes = Gifts("costume")
         self.voice = Voice()
 
     async def stop(self):
@@ -65,6 +66,7 @@ class Service:
                     return
                 try:
                     self.gifts.event(event)
+                    self.costumes.event(event)
                 except (ValueError, AttributeError, TypeError):
                     LOG.warning('Rejected malformed gift event')
             try:
@@ -98,7 +100,7 @@ class Service:
             return await handler(request)
         app = web.Application(middlewares=[security], client_max_size=2048)
         async def status(request):
-            return web.json_response({**self.state.snapshot(), 'gifts': self.gifts.snapshot(), 'voice': self.voice.snapshot()})
+            return web.json_response({**self.state.snapshot(), 'gifts': self.gifts.snapshot(), 'costumes': self.costumes.snapshot(), 'voice': self.voice.snapshot()})
         async def control(request):
             try:
                 data = await request.json()
@@ -110,6 +112,7 @@ class Service:
                 raise web.HTTPBadRequest(text='Invalid action or username')
             await self.stop()
             self.gifts = Gifts()
+            self.costumes = Gifts("costume")
             if action == 'connect':
                 self.state = State(username=username, status='Connecting')
                 self.task = asyncio.create_task(self.watch())

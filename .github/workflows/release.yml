@@ -1,4 +1,4 @@
-name: Build and publish SteveCount head attachment and voice emotes
+name: Build and publish SteveCount wandering and timed outfit
 on:
   workflow_dispatch:
   push:
@@ -115,17 +115,19 @@ jobs:
           GH_REPO: ${{ github.repository }}
         run: |
           @'
-          SteveCount head attachment fix and voice emotes, Minecraft 26.3, Fabric + NeoForge.
+          SteveCount wandering + timed maid outfit, Minecraft 26.3, Fabric and NeoForge.
 
-          Replace BOTH the matching SteveCount JAR and SteveCount-Companion.exe. Close the old companion before launching the replacement. Fabric users should download SteveCount-Windows-Fabric.zip. Install Player Emotes 2.0.3 for Minecraft 26.3 for the SAME loader separately: https://modrinth.com/mod/player-emotes . It is optional and not bundled.
+          Fabric users: download SteveCount-Windows-Fabric.zip. Close Minecraft and the old companion, then replace BOTH the matching SteveCount JAR and SteveCount-Companion.exe. Keep only one SteveCount JAR in your instance mods folder. NeoForge users should choose SteveCount-Windows-NeoForge.zip instead.
 
-          Head riding now attaches the seat to the actual rendered player head, following tilt and rotation instead of hovering over body height. Seat contact is preserved when changing head-riding scale. The rider remains hidden in first person; use F5 to see it.
+          Little Buddy wanders close and far within the configured radius, rests between strolls, and sometimes runs ahead, beside or behind you while moving. J > Buddy options > Wandering toggles classic follow mode. K > Character > Roam radius adjusts the radius. Head riding and manual emotes take priority.
 
-          Say "dance little buddy" (or "little buddy dance") to randomly pick Ground Spin, Robot Dance, Matrix Dodge, Thriller or Side Step Shuffle. Wave uses Player Emotes Wave. Say "how you feeling little buddy?" to choose a random compatible solo emote. Random picks avoid immediate repeats. Say "stop little buddy" to end loops. Enable the microphone in the companion and Voice commands in J. Without Player Emotes, Dance/Wave fall back to built-ins and Feeling uses Cheer. Existing buttons and automatic personality actions remain available.
+          Each individual TikTok gift priced 1,000 coins or more changes ONLY the local player's outfit to the approved maid costume for 30 real minutes. Another qualifying gift RESTARTS thirty minutes; time does not stack and cheaper gifts do not accumulate. The deadline persists across restarts and the original outfit returns automatically. Armor is hidden visually while keeping its real equipment/protection. Little Buddy and other players are unchanged. J > Buddy options > Gift outfit provides preview, restore and disable controls. Real gift triggers require Streamer mode, Live status and demo off. The original user-supplied PNG is bundled, credited to 8onfire: https://www.planetminecraft.com/skin/maid-outfit-skin-overlay/ . See GIFT-OUTFIT.md and COSTUME-NOTICE.md.
 
-          Both loader builds and 236 Java core checks each passed. Local disposable Minecraft worlds verified head riding and tilted/large-scale seat contact with player and astronaut rigs, optional Player Emotes animation playback and synthetic voice/gift regressions. 85 Python tests passed locally; standard Windows runner checks, packaged recognition, authenticated localhost and ZIP validation completed in this workflow. No new live TikTok/paid-gift, Fiishy's microphone, shader or FPS tests. Unsigned release candidate. See TEST-REPORT.md and VOICE.md.
+          Keeps the previous head attachment fix, voice controls, Player Emotes adapter and Hand Heart punch behavior. Player Emotes 2.0.3 for Minecraft 26.3 is optional and installed separately for the same loader: https://modrinth.com/mod/player-emotes . Fabric requires Loader 0.20.1+ and Fabric API 0.166.2+26.3. NeoForge uses 26.3.0.102.
+
+          Local verification: both loader builds, 12,260 Java core checks per loader and 87 Python tests passed. Disposable Minecraft worlds verified wandering, radius/clearance, catch-up, pause, head ride, player-only costume, wide/slim models, first-person arms, Survival inventory/armor retention, expiry and disabling. Gift events were synthetic; no new paid TikTok gift or Fiishy's microphone test is claimed. The release runner also verifies packaged recognition, authenticated localhost and installation ZIP integrity. Unsigned release candidate. See TEST-REPORT.md.
           '@ | Set-Content release-notes.md
-          $tag = 'v1.0.0-rc.11-build-' + $env:GITHUB_RUN_NUMBER
-          gh release create $tag dist/SteveCount-Windows-Fabric.zip dist/SteveCount-Windows-NeoForge.zip dist/SteveCount-26.3-Fabric.jar dist/SteveCount-Windows.zip dist/SteveCount-26.3-NeoForge.jar dist/SteveCount-Companion.exe dist/SteveCount-Source.zip dist/SHA256SUMS.txt --target $env:GITHUB_SHA --title "SteveCount — Head attachment fix + voice emotes" --notes-file release-notes.md --prerelease
+          $tag = 'v1.0.0-rc.12-build-' + $env:GITHUB_RUN_NUMBER
+          gh release create $tag dist/SteveCount-Windows-Fabric.zip dist/SteveCount-Windows-NeoForge.zip dist/SteveCount-26.3-Fabric.jar dist/SteveCount-Windows.zip dist/SteveCount-26.3-NeoForge.jar dist/SteveCount-Companion.exe dist/SteveCount-Source.zip dist/SHA256SUMS.txt --target $env:GITHUB_SHA --title "SteveCount — Wandering + timed maid outfit" --notes-file release-notes.md --prerelease
           if ($LASTEXITCODE -ne 0) { throw 'Release publication failed' }
 

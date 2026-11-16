@@ -61,3 +61,26 @@ def test_installed_gift_event_structure():
     e.repeat_end=1
     assert g.event(e,101)
     assert not g.event(e,107)
+
+
+def test_costume_individual_value_threshold_and_independent_punch():
+    costume, punch = Gifts('costume'), Gifts()
+    for value in (0, 100, 999, True, '1000', -1, None):
+        assert not costume.event(event(gift=N(name='Anything', diamond_count=value), repeat_count=10000), 100)
+    expensive=event(gift=N(name='Any Name', diamond_count=1000))
+    assert costume.event(expensive,100)
+    assert not punch.event(expensive,100)
+    assert not costume.event(expensive,106)
+    assert costume.event(event(2,gift=N(name='Other',diamond_count=5000)),100.1)
+    assert costume.snapshot(100.1)['events'][-1]['unitCoins']==5000
+    assert not costume.event(event(3,gift=N(name='Other',diamond_count=1000),streaking=True),101)
+    assert not costume.event(event(0,gift=N(name='Other',diamond_count=1000)),101)
+    assert not costume.snapshot(107)['events']
+
+
+def test_installed_library_expensive_gift():
+    from TikTokLiveProto.v3.webcast.shared.message import CommonMessageData
+    e=GiftEvent(gift_id=456, gift=ExtendedGift(name='Any gift',diamond_count=1000,type=1),
+                common=CommonMessageData(msg_id=200),repeat_count=1,repeat_end=1)
+    assert Gifts('costume').event(e,100)
+    assert not Gifts().event(e,100)

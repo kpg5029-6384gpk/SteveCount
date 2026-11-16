@@ -20,6 +20,7 @@ import net.minecraft.world.phys.Vec3;
 /** Pure client render state: no entity spawn, world mutation, interaction or network packets. */
 final class FollowerCharacter {
     static final FollowTrail trail=new FollowTrail();
+    static final BuddyWander wander=new BuddyWander(new java.util.Random());
     private static ClientLevel level;
     static int extractedFrames;
     static int extractionCallbacks;
@@ -31,28 +32,37 @@ final class FollowerCharacter {
     private static PlayerSkin skin(String path,PlayerModelType type) {
         return new PlayerSkin(new ClientAsset.ResourceTexture(Identifier.withDefaultNamespace("entity/player/"+path)),null,null,type,true);
     }
-    static void recall() {trail.reset();}
+    static void recall() {trail.reset();wander.reset();}
     static void tick() {
         var mc=Minecraft.getInstance();var c=SteveCount.settings;
-        if(mc.level!=level) {trail.reset();level=mc.level;BuddyEmotes.stop();BuddyPersonality.rest();}
-        if(mc.player==null || level==null || !c.showCharacter() || !mc.player.isAlive()) {trail.reset();BuddyEmotes.stop();return;}
+        if(mc.level!=level) {recall();level=mc.level;BuddyEmotes.stop();BuddyPersonality.rest();}
+        if(mc.player==null || level==null || !c.showCharacter() || !mc.player.isAlive()) {recall();BuddyEmotes.stop();return;}
         if(mc.isPaused())return;
         Vec3 player=mc.player.position();
-        Vec3 target=trail.target(player,mc.player.getYRot(),c.followDistance);
+        Vec3 route=trail.target(player,mc.player.getYRot(),c.followDistance*.65);
+        if(c.characterHeadRide) {
+            wander.reset();trail.previous=trail.position=player;trail.speed=0;return;
+        }
+        Vec3 target=c.characterWander?wander.target(player,mc.player.getYRot(),c.followDistance,trail.position,route):trail.target(player,mc.player.getYRot(),c.followDistance);
+        long now=System.currentTimeMillis();
+        boolean busy=!BuddyEmotes.current(now).equals("None") || now-GiftPunch.animationStart<900;
+        if(busy && trail.position!=null && trail.position.subtract(player).horizontalDistanceSqr()<=c.followDistance*c.followDistance)target=trail.position;
         boolean relocated=trail.position==null || trail.position.distanceToSqr(player)>256 || Math.abs(trail.position.y-player.y)>8 || trail.blocked>30;
-        Vec3 next=trail.propose(player,target);
+        Vec3 next=trail.propose(player,target,c.characterWander?(wander.moving?.38:.12):.24);
+        if(c.characterWander)next=BuddyWander.bound(player,next,c.followDistance);
         if(c.characterGrounded && mc.player.onGround()) {
             next=ground(next,c.characterScale,player.y);
-            if(!fits(next,c.characterScale)) {
+            if(next==null || !fits(next,c.characterScale)) {
                 trail.blocked++;
+                if(c.characterWander && trail.blocked%10==0)wander.obstructed();
                 if(relocated) {
                     Vec3 safe=null;
                     for(int i=0;i<8;i++) {
                         double angle=i*Math.PI/4;
                         Vec3 probe=ground(player.add(Math.sin(angle)*c.followDistance,0,Math.cos(angle)*c.followDistance),c.characterScale,player.y);
-                        if(fits(probe,c.characterScale)) {safe=probe;break;}
+                        if(probe!=null && fits(probe,c.characterScale)) {safe=probe;break;}
                     }
-                    if(safe==null) {trail.reset();return;}
+                    if(safe==null) {recall();return;}
                     next=safe;trail.previous=safe;
                 } else next=trail.position;
             }
@@ -67,17 +77,17 @@ final class FollowerCharacter {
     }
     private static Vec3 ground(Vec3 pos,float scale,double fallbackY) {
         BlockPos at=BlockPos.containing(pos);
-        if(!level.hasChunkAt(at))return new Vec3(pos.x,fallbackY,pos.z);
+        if(!level.hasChunkAt(at))return SteveCount.settings.characterWander?null:new Vec3(pos.x,fallbackY,pos.z);
         // Read a small vertical column; never alter blocks or run server AI.
         for(int y=at.getY()+1;y>=at.getY()-3;y--) {
             BlockPos block=new BlockPos(at.getX(),y,at.getZ());
             var shape=level.getBlockState(block).getCollisionShape(level,block);
             if(!shape.isEmpty()) {
                 double top=y+shape.max(Direction.Axis.Y);
-                if(top<=pos.y+1.05) return new Vec3(pos.x,top,pos.z);
+                if(top<=pos.y+1.05 && (!SteveCount.settings.characterWander || top>=fallbackY-1.1)) return new Vec3(pos.x,top,pos.z);
             }
         }
-        return pos;
+        return SteveCount.settings.characterWander?null:pos;
     }
     static String label(Bridge.Snapshot state) {
         String prefix=SteveCount.demo?(state.status().equals("Demo Mode")?"DEMO":"DEMO "+state.status()):state.status();

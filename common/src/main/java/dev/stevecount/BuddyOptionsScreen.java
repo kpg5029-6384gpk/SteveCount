@@ -36,13 +36,15 @@ public final class BuddyOptionsScreen extends Screen {
         });
         button("Personality / sounds",112,()->minecraft.gui.setScreen(new PersonalityScreen(this)));
         button("Emotes / Voice commands",136,()->minecraft.gui.setScreen(new EmoteScreen(this)));
-        button("Reset head-riding size (18%)",160,()->{c.headRideScale=.18f;changed();});
+        button("Wandering: "+(c.characterWander?"On":"Off"),160,()->{c.characterWander=!c.characterWander;FollowerCharacter.recall();changed();});
+        addRenderableWidget(Button.builder(Component.literal("Reset rider size"),b->{c.headRideScale=.18f;changed();}).bounds((width-300)/2,184,146,20).build());
+        addRenderableWidget(Button.builder(Component.literal("Gift outfit"),b->minecraft.gui.setScreen(new CostumeScreen(this))).bounds((width-300)/2+154,184,146,20).build());
         button("Save & Done",height-26,this::onClose);
     }
     @Override public void extractRenderState(GuiGraphicsExtractor g,int mx,int my,float partial) {
         super.extractRenderState(g,mx,my,partial);
         g.centeredText(font,"Little Buddy options",width/2,14,0xFF7FFFD4);
-        if(height>=240)g.centeredText(font,"Regular: buddy only. Streamer: viewer HUD and label.",width/2,height-40,0xFFB7CAD0);
+        if(height>=280)g.centeredText(font,"Regular: buddy only. Streamer: viewer HUD and label.",width/2,height-40,0xFFB7CAD0);
     }
     @Override public boolean isPauseScreen() {return false;}
     @Override public void onClose() {SteveCount.settings.save();minecraft.gui.setScreen(parent);}

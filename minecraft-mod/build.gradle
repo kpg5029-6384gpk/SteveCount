@@ -51,6 +51,8 @@ neoForge {
         client {
             client()
             if (project.hasProperty('stevecountSmoke')) systemProperty 'stevecount.smoke', 'true'
+            if (project.hasProperty('stevecountCostumeSmoke')) {systemProperty 'stevecount.followerSmoke', 'true';systemProperty 'stevecount.costumeSmoke', 'true'}
+            if (project.hasProperty('stevecountWanderSmoke')) {systemProperty 'stevecount.followerSmoke', 'true';systemProperty 'stevecount.wanderSmoke', 'true'}
             if (project.hasProperty('stevecountFollowerSmoke')) systemProperty 'stevecount.followerSmoke', 'true'
             if (project.hasProperty('stevecountPunchSmoke')) {systemProperty 'stevecount.followerSmoke', 'true';systemProperty 'stevecount.punchSmoke', 'true'}
             if (project.hasProperty('stevecountPlayerEmotesSmoke')) {systemProperty 'stevecount.followerSmoke', 'true';systemProperty 'stevecount.punchSmoke', 'true';systemProperty 'stevecount.playerEmotesSmoke', 'true'}

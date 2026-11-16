@@ -25,6 +25,7 @@ def main():
     lines=['# Third-party notices','', 'SteveCount authored code: MIT; see LICENSE.',
            'Optional Player Emotes mod and animations by YamiKhal are installed separately, not redistributed. See PLAYER-EMOTES.md.',
            'User-selected Fiishy skin: see SKIN-NOTICE.md for source and artwork attribution.',
+           'Approved maid outfit by 8onfire: see COSTUME-NOTICE.md; artwork is separate from SteveCount MIT code.',
            'Minecraft Steve/Alex textures are referenced from the installed game and are not redistributed.',
            'NeoForge MDK template: see minecraft-mod/TEMPLATE_LICENSE.txt in the source archive.',
            'TikTokLive and TikTokLiveProto include modified AGPL-3.0 terms with integration exceptions; full texts are included below.', '']
@@ -62,7 +63,7 @@ def main():
     if ssl_asset.is_file() and ssl_asset.name not in archive.toc:
         raise SystemExit('Frozen companion is missing its required SSL certificate asset')
     # Separate installer bundles prevent installing both loader JARs by accident.
-    shared=[p for p in DIST.rglob('*') if p.is_file() and p.suffix not in ('.zip','.jar') and p.name!='SHA256SUMS.txt']
+    shared=[p for p in DIST.rglob('*') if p.is_file() and p.suffix not in ('.zip','.jar') and p.name!='SHA256SUMS.txt' and not any(part.startswith('held-') for part in p.relative_to(DIST).parts)]
     shared.append(DIST/'SteveCount-Source.zip')
     variants={'SteveCount-Windows.zip':'NeoForge','SteveCount-Windows-NeoForge.zip':'NeoForge','SteveCount-Windows-Fabric.zip':'Fabric'}
     for filename,loader in variants.items():

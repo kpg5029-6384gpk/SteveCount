@@ -75,3 +75,18 @@ Press **J > Buddy options** (or K > Character > Buddy options). The head-riding 
 
 ## Optional Player Emotes library
 Install **Player Emotes 2.0.3 for Minecraft 26.3** for your loader from https://modrinth.com/mod/player-emotes, alongside the matching updated SteveCount JAR. Restart and press **J > Player Emotes** to search 46 compatible solo animations for Little Buddy. Player-style skins use native limb poses; the astronaut retargets them onto its rigid rounded limbs. Partner/prop emotes and imported sound/particle effects are excluded. SteveCount still works without this optional mod, and the companion is unchanged. See [PLAYER-EMOTES.md](PLAYER-EMOTES.md).
+
+
+## Wandering and timed gift outfit
+
+Buddy now wanders near and far within your configured radius, rests, and sometimes
+runs ahead or beside you while moving. **J > Buddy options > Wandering** switches
+between wandering and classic following; **K > Character > Roam radius** adjusts it.
+See [WANDERING.md](WANDERING.md).
+
+An individual **1,000+ coin gift** puts the approved maid outfit on your local player
+for **30 real minutes**; another qualifying gift restarts thirty minutes. The original
+outfit returns automatically. **J > Buddy options > Gift outfit** offers preview,
+manual restore and disable controls. Buddy and other players are unchanged. Armor
+is hidden visually while keeping its actual protection. See [GIFT-OUTFIT.md](GIFT-OUTFIT.md)
+and [COSTUME-NOTICE.md](COSTUME-NOTICE.md). **Replace BOTH the matching JAR and companion EXE.**

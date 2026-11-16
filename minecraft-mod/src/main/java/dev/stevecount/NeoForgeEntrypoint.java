@@ -21,6 +21,7 @@ public final class NeoForgeEntrypoint {
         bus.addListener((RegisterKeyMappingsEvent e)->{e.register(SteveCount.key);e.register(SteveCount.emoteKey);});
         bus.addListener((RegisterGuiLayersEvent e)->e.registerAboveAll(Identifier.fromNamespaceAndPath("stevecount","hud"),(g,d)->{
             var mc=Minecraft.getInstance();
+            if(mc.player!=null && !mc.gui.hud.isHidden())MaidCostume.draw(g);
             if(SteveCount.settings.showHud() && mc.player!=null && !mc.gui.hud.isHidden() && !(mc.gui.screen() instanceof MoveScreen)) Hud.draw(g,false);
         }));
         NeoForge.EVENT_BUS.addListener((RegisterClientCommandsEvent e)->e.getDispatcher().register(Commands.literal("stevecount").executes(c->{Minecraft.getInstance().schedule(SteveCount::open);return 1;})));

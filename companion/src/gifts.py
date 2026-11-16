@@ -5,7 +5,10 @@ from collections import deque, OrderedDict
 
 
 class Gifts:
-    def __init__(self):
+    def __init__(self, kind="punch"):
+        if kind not in ("punch", "costume"):
+            raise ValueError("Unknown gift effect")
+        self.kind = kind
         self.session = str(uuid.uuid4())
         self.sequence = 0
         self.events = deque(maxlen=32)
@@ -15,12 +18,19 @@ class Gifts:
     def event(self, event, now=None):
         now = time.time() if now is None else now
         gift = getattr(event, 'gift', None)
-        if gift is None or event.streaking:
+        if gift is None or getattr(event, 'streaking', True):
             return False
         # Fail closed if upstream omits metadata or changes the name/value.
-        if str(gift.name).strip().casefold() not in ('hand heart', 'hand hearts') or gift.diamond_count != 100:
+        value = getattr(gift, 'diamond_count', None)
+        if type(value) is not int or not 0 <= value <= 2_147_483_647:
             return False
-        if not isinstance(event.gift_id, int) or event.gift_id <= 0:
+        if self.kind == 'punch':
+            if str(getattr(gift, 'name', '')).strip().casefold() not in ('hand heart', 'hand hearts') or value != 100:
+                return False
+        elif value < 1000:
+            return False
+        gift_id = getattr(event, 'gift_id', None)
+        if type(gift_id) is not int or gift_id <= 0:
             return False
         group = getattr(event, 'group_id', 0)
         user = getattr(getattr(event, 'user', None), 'id', 0)
@@ -33,11 +43,11 @@ class Gifts:
         while len(self.seen) > 2048:
             self.seen.popitem(last=False)
         # One accepted gift per five seconds globally. Dropped gifts are not queued.
-        if self.last is not None and now - self.last < 5:
+        if self.kind == 'punch' and self.last is not None and now - self.last < 5:
             return False
         self.last = now
         self.sequence += 1
-        self.events.append(dict(sequence=self.sequence, created=now))
+        self.events.append(dict(sequence=self.sequence, created=now, unitCoins=value))
         return True
 
     def snapshot(self, now=None):

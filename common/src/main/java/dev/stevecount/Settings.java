@@ -18,8 +18,11 @@ public class Settings {
     public String milestones = "10,25,50,100,250,500,1000";
     public String displayMode = "HUD", characterSkin = "Steve";
     public float characterScale = .55f, followDistance = 2.5f;
-    public boolean characterLabel = true, characterGrounded = true;
+    public boolean characterLabel = true, characterGrounded = true, characterWander = true;
     public volatile boolean giftPunch = false;
+    public boolean maidGift = true;
+    public long maidUntil = 0;
+    public String maidWearer = "";
     public boolean characterHeadRide = false;
     public float headRideScale = .18f;
     public volatile boolean streamerMode = true;
@@ -30,6 +33,8 @@ public class Settings {
     static Path configDirectory = Path.of("config");
     private static Path path() { return configDirectory.resolve("stevecount.json"); }
     public void validate() {
+        long now=System.currentTimeMillis();
+        if(maidUntil<0 || maidUntil>now+CostumeClock.DURATION || maidWearer==null) {maidUntil=0;maidWearer="";}
         scale = Float.isFinite(scale) ? Math.clamp(scale, .5f, 3f) : 1;
         opacity = Float.isFinite(opacity) ? Math.clamp(opacity, 0, 1) : .65f;
         x = Float.isFinite(x) ? Math.clamp(x, 0, 1) : 0;

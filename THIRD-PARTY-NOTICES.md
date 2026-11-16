@@ -3,6 +3,7 @@
 SteveCount authored code: MIT; see LICENSE.
 Optional Player Emotes mod and animations by YamiKhal are installed separately, not redistributed. See PLAYER-EMOTES.md.
 User-selected Fiishy skin: see SKIN-NOTICE.md for source and artwork attribution.
+Approved maid outfit by 8onfire: see COSTUME-NOTICE.md; artwork is separate from SteveCount MIT code.
 Minecraft Steve/Alex textures are referenced from the installed game and are not redistributed.
 NeoForge MDK template: see minecraft-mod/TEMPLATE_LICENSE.txt in the source archive.
 TikTokLive and TikTokLiveProto include modified AGPL-3.0 terms with integration exceptions; full texts are included below.

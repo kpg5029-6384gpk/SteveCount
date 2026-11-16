@@ -21,6 +21,7 @@ public final class FabricEntrypoint implements ClientModInitializer {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher,registry)->dispatcher.register(ClientCommands.literal("stevecount").executes(c->{Minecraft.getInstance().schedule(SteveCount::open);return 1;})));
         HudElementRegistry.addLast(Identifier.fromNamespaceAndPath("stevecount","hud"),(g,d)->{
             var mc=Minecraft.getInstance();
+            if(mc.player!=null && !mc.gui.hud.isHidden())MaidCostume.draw(g);
             if(SteveCount.settings.showHud() && mc.player!=null && !mc.gui.hud.isHidden() && !(mc.gui.screen() instanceof MoveScreen)) Hud.draw(g,false);
         });
     }

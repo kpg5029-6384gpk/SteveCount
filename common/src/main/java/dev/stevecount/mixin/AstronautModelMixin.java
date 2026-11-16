@@ -2,6 +2,7 @@ package dev.stevecount.mixin;
 
 import dev.stevecount.AstronautModel;
 import dev.stevecount.HeadRide;
+import dev.stevecount.MaidCostume;
 import dev.stevecount.HeadPassenger;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.player.PlayerModel;
@@ -27,6 +28,7 @@ abstract class AstronautModelMixin {
     @Inject(method="submit(Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/level/CameraRenderState;)V",
         at=@At(value="INVOKE",target="Lnet/minecraft/client/renderer/SubmitNodeCollector;submitModel(Lnet/minecraft/client/model/Model;Ljava/lang/Object;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/rendertype/RenderType;IIILnet/minecraft/client/renderer/texture/UvMapping;I)V"))
     private void stevecount$headPassenger(LivingEntityRenderState state,PoseStack stack,SubmitNodeCollector collector,CameraRenderState camera,CallbackInfo ci) {
+        if(state instanceof AvatarRenderState owner)MaidCostume.submit(owner,stack,collector);
         if(state instanceof AvatarRenderState avatar && !(state instanceof BuddyRenderState)
             && ((HeadPassenger)avatar).stevecount$getPassenger()!=null
             && ((LivingEntityRenderer<?,?,?>)(Object)this).getModel() instanceof PlayerModel model)

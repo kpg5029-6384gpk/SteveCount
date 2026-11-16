@@ -9,12 +9,12 @@ SteveCount can show its count as a miniature character that follows your player,
 3. Open **Character**.
 4. Click **Display** to cycle **HUD → Character → Both**.
 5. Use **Buddy** to choose **Steve**, **Alex**, **Player** (your already-loaded player skin), **Fiishy** (the user-selected NameMC skin), or **Astronaut** (the rounded custom model).
-6. Adjust **Character size** and **Follow distance**. Turn the count label or grounded movement on/off as desired.
+6. Adjust **Character size** and **Roam radius**. Turn the count label or grounded movement on/off as desired.
 7. Click **Save & Done**. These options persist in `config/stevecount.json`.
 
 Press **F5** for a third-person view. In first person, a character following behind you will normally be outside your view; turn around while standing still to see it. **Recall companion** brings it back to your current vicinity. **Reset character** restores defaults and returns to HUD mode.
 
-The character follows your recent movement route, animates its arms/legs, and looks toward you. Grounded mode samples nearby blocks to keep its feet near the ground; turn it off for a hovering follower. It catches up after a large teleport and resets when you disconnect or change dimensions. F1 hides it with the HUD.
+With Wandering enabled (J > Buddy options), the character strolls around you within the configured radius, rests, and occasionally runs ahead or beside you when moving. Turn Wandering off for the earlier trailing behavior. See [WANDERING.md](WANDERING.md). It animates its arms/legs and looks toward you. Grounded mode samples nearby blocks to keep its feet near the ground; turn it off for a hovering follower. It catches up after a large teleport and resets when you disconnect or change dimensions. F1 hides it with the HUD.
 
 Press **J** or choose **Buddy options > Emotes / Voice commands** for Wave, Dance, Cheer and the tiny head-riding toggle. Recall is now in that screen. See [EMOTES.md](EMOTES.md).
 

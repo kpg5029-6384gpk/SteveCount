@@ -49,9 +49,9 @@ public final class SettingsScreen extends Screen {
         } else if(tab==3) {
             row("Display: "+c.displayMode,()->{c.displayMode=next(c.displayMode,"HUD","Character","Both");FollowerCharacter.recall();refresh();},"Buddy: "+c.characterSkin,()->{c.characterSkin=next(c.characterSkin,"Steve","Alex","Player","Fiishy","Astronaut");refresh();});
             slider("Character size",.25,1,c.characterScale,v->c.characterScale=(float)v);
-            slider("Follow distance",1.5,6,c.followDistance,v->c.followDistance=(float)v);
+            slider(c.characterWander?"Roam radius":"Follow distance",1.5,6,c.followDistance,v->c.followDistance=(float)v);
             row("Count label: "+c.characterLabel,()->{c.characterLabel=!c.characterLabel;refresh();},"Grounded: "+c.characterGrounded,()->{c.characterGrounded=!c.characterGrounded;refresh();});
-            row("Buddy options",()->minecraft.gui.setScreen(new BuddyOptionsScreen(this)),"Reset character",()->{c.displayMode="HUD";c.characterSkin="Steve";c.characterScale=.55f;c.followDistance=2.5f;c.characterLabel=c.characterGrounded=true;c.characterHeadRide=false;c.headRideScale=.18f;c.giftPunch=false;BuddyEmotes.stop();FollowerCharacter.recall();refresh();});
+            row("Buddy options",()->minecraft.gui.setScreen(new BuddyOptionsScreen(this)),"Reset character",()->{c.displayMode="HUD";c.characterSkin="Steve";c.characterScale=.55f;c.followDistance=2.5f;c.characterLabel=c.characterGrounded=c.characterWander=true;c.characterHeadRide=false;c.headRideScale=.18f;c.giftPunch=false;BuddyEmotes.stop();FollowerCharacter.recall();refresh();});
             row("Gift damage: "+c.giftPunch,()->{c.giftPunch=!c.giftPunch;c.save();refresh();},"Preview punch (no damage)",GiftPunch::preview);
         } else {
             row("Animations: "+c.animations,()->{c.animations=!c.animations;refresh();},"Milestone sound: "+c.sound,()->{c.sound=!c.sound;refresh();});

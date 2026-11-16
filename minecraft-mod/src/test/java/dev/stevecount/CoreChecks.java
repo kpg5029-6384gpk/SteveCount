@@ -206,6 +206,64 @@ public final class CoreChecks {
             HeadRide.mountSeat(stack,size);
             check(stack.last().pose().transformPosition(new org.joml.Vector3f(0,.75f,0)).distance(contact)<.00001,"Seat contact is independent of pitch and scale");
         }
+        var roaming=new BuddyWander(new java.util.Random(735));
+        var roamingTrail=new FollowTrail();var center=new net.minecraft.world.phys.Vec3(0,64,0);
+        double closest=99,farthest=0;int rests=0;var idleGoals=new java.util.HashSet<net.minecraft.world.phys.Vec3>();
+        for(int tick=0;tick<4000;tick++) {
+            var goal=roaming.target(center,tick%360,3,roamingTrail.position,center.add(0,0,-2));
+            idleGoals.add(goal);double radius=goal.subtract(center).horizontalDistance();closest=Math.min(closest,radius);farthest=Math.max(farthest,radius);
+            check(radius<=3.000001,"Idle wander destinations stay in radius");
+            var before=roamingTrail.position;roamingTrail.accept(roamingTrail.propose(center,goal,.12));
+            if(before!=null && before.distanceToSqr(roamingTrail.position)<.000001)rests++;
+        }
+        check(closest<1.4 && farthest>2.5 && idleGoals.size()>20,"Idle wanders choose both near and far destinations");
+        check(rests>100,"Idle wandering pauses on arrival instead of constant orbiting");
+        roaming.reset();roamingTrail.reset();boolean front=false,left=false,right=false,rear=false;
+        for(int tick=0;tick<4000;tick++) {
+            center=new net.minecraft.world.phys.Vec3(0,64,tick*.27);
+            var goal=roaming.target(center,180,3,roamingTrail.position,center.add(0,0,-2));
+            var relative=goal.subtract(center);front|=relative.z>.7;rear|=relative.z<-.7;left|=relative.x>.7;right|=relative.x<-.7;
+            check(relative.horizontalDistance()<=3.000001,"Moving destinations stay in radius");
+            var next=BuddyWander.bound(center,roamingTrail.propose(center,goal,.38),3);roamingTrail.accept(next);
+            check(next.subtract(center).horizontalDistance()<=3.000001,"Moving companion remains bounded at sprint speed");
+        }
+        check(front && rear && left && right,"Moving planner selects ahead, behind and either side using movement direction, not camera yaw");
+        center=new net.minecraft.world.phys.Vec3(500,90,500);
+        var afterTeleport=roaming.target(center,0,1.5,roamingTrail.position,center);
+        check(afterTeleport.subtract(center).horizontalDistance()<=1.500001,"Teleport and reduced radius reset old destinations");
+        int picked=roaming.destinations;roaming.obstructed();roaming.target(center,0,1.5,null,center);
+        check(roaming.destinations>picked,"Blocked wander destination can be replaced");
+        check(new Settings().characterWander,"Wandering defaults on for new and old profiles");
+        var oldConfig=Settings.JSON.fromJson("{\"followDistance\":4}",Settings.class);
+        check(oldConfig.characterWander && oldConfig.followDistance==4,"Old follow radius is retained when adding wandering");
+        oldConfig.characterWander=false;var persistedWander=Settings.JSON.fromJson(Settings.JSON.toJson(oldConfig),Settings.class);
+        check(!persistedWander.characterWander,"Wandering preference persists independently of radius");
+        long costumeNow=1_000_000;
+        long deadline=CostumeClock.start(costumeNow);
+        check(deadline-costumeNow==1_800_000,"Costume lasts exactly thirty minutes");
+        check(CostumeClock.remaining(deadline,costumeNow+600_000)==1_200_000,"Real time continues through pause and closed game");
+        check(!CostumeClock.wears(deadline,"fiishy","other",costumeNow),"Only the wearer gets the costume");
+        check(CostumeClock.wears(deadline,"fiishy","fiishy",costumeNow),"Matching wearer sees costume");
+        check(CostumeClock.remaining(deadline,deadline)==0 && CostumeClock.remaining(deadline,deadline+1)==0,"Automatic exact expiry");
+        check(CostumeClock.start(costumeNow+500_000)==costumeNow+2_300_000,"Another gift restarts instead of stacking timer");
+        check(CostumeClock.remaining(Long.MAX_VALUE,costumeNow)<=CostumeClock.DURATION,"Malformed long timer is bounded");
+        var cosmeticCursor=new CostumeCursor();var cosmeticFeed=new com.google.gson.JsonObject();cosmeticFeed.addProperty("session","costume-test");cosmeticFeed.addProperty("sequence",0);cosmeticFeed.add("events",new com.google.gson.JsonArray());
+        check(!cosmeticCursor.accept(cosmeticFeed,100,true),"Costume feed baselines sessions");
+        var cosmeticEvent=new com.google.gson.JsonObject();cosmeticEvent.addProperty("sequence",1);cosmeticEvent.addProperty("created",100);cosmeticEvent.addProperty("unitCoins",1000);
+        cosmeticFeed.getAsJsonArray("events").add(cosmeticEvent);cosmeticFeed.addProperty("sequence",1);
+        check(cosmeticCursor.accept(cosmeticFeed,100,true),"Exact 1000-coin gift triggers cosmetic feed");
+        check(!cosmeticCursor.accept(cosmeticFeed,100,true),"Costume gift never repeats");
+        cosmeticEvent.addProperty("sequence",2);cosmeticEvent.addProperty("unitCoins",999);cosmeticFeed.addProperty("sequence",2);
+        check(!cosmeticCursor.accept(cosmeticFeed,100,true),"Cheap gift cannot trigger costume");
+        cosmeticEvent.addProperty("sequence",3);cosmeticEvent.addProperty("unitCoins",5000);cosmeticFeed.addProperty("sequence",3);
+        check(!cosmeticCursor.accept(cosmeticFeed,100,false) && !cosmeticCursor.accept(cosmeticFeed,100,true),"Disabled cosmetics do not replay later");
+        cosmeticEvent.addProperty("sequence",4);cosmeticFeed.addProperty("sequence",4);
+        check(!cosmeticCursor.accept(cosmeticFeed,106,true),"Stale costume event rejected");
+        check(!cosmeticCursor.accept(new com.google.gson.JsonObject(),100,true),"Malformed costume feed harmless");
+        check(!MaidCostume.validHeader(new byte[100]),"Non-PNG costume rejected before native decoding");
+        var lease=new Settings();lease.maidUntil=CostumeClock.start(System.currentTimeMillis());lease.maidWearer="fiishy-test";
+        var storedLease=Settings.JSON.fromJson(Settings.JSON.toJson(lease),Settings.class);storedLease.validate();
+        check(storedLease.maidUntil==lease.maidUntil && storedLease.maidWearer.equals(lease.maidWearer),"Costume deadline and wearer survive config serialization");
         System.out.println("SteveCount: "+checks+" core assertions passed");
     }
 }
