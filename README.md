@@ -90,3 +90,6 @@ outfit returns automatically. **J > Buddy options > Gift outfit** offers preview
 manual restore and disable controls. Buddy and other players are unchanged. Armor
 is hidden visually while keeping its actual protection. See [GIFT-OUTFIT.md](GIFT-OUTFIT.md)
 and [COSTUME-NOTICE.md](COSTUME-NOTICE.md). **Replace BOTH the matching JAR and companion EXE.**
+
+### Companion HTTP 400 when connecting
+Use the TikTok handle, not its display name. The connection-fix release supports leading-dot handles, including `.fishyplays` and `@.fishyplays`. Replace both the companion EXE and your loader's JAR, restart them, then connect again. Creator LIVE URLs also work, including `www.tiktok.com/@.fishyplays/live`. Shortened sharing links are unsupported; use the creator handle instead. Invalid input now shows its reason in settings.

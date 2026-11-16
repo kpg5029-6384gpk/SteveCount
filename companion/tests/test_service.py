@@ -54,3 +54,23 @@ async def test_offline_retry(monkeypatch):
     with pytest.raises(asyncio.CancelledError): await s.watch()
     assert s.state.status=='Offline'
     assert sleeps==[2,4,8] and len(attempts)==3
+
+@pytest.mark.asyncio
+async def test_control_validation_and_valid_connect():
+    s = Service('secret')
+    async def watch():
+        await asyncio.Event().wait()
+    s.watch = watch
+    headers = {'Host': '127.0.0.1:18763', 'Authorization': 'Bearer secret'}
+    async with TestClient(TestServer(s.app())) as client:
+        for data in [None, [], {'action': 'connect'}, {'action': 'connect', 'username': 12}, {'action': 'connect', 'username': ''}]:
+            response = await client.post('/control', headers=headers, json=data)
+            assert response.status == 400
+            assert (await response.json())['error']
+        response = await client.post('/control', headers=headers, json={'action': 'connect', 'username': 'www.tiktok.com/@.fishyplays/live'})
+        assert response.status == 200
+        assert (await response.json())['username'] == '.fishyplays'
+        response = await client.post('/control', headers=headers, json={'action': 'connect', 'username': 'Display Name'})
+        assert response.status == 400
+        assert 'display name' in (await response.json())['error']
+        assert s.state.username == '.fishyplays' and s.task is not None

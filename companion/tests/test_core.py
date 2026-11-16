@@ -37,3 +37,15 @@ def test_state():
 
 def test_backoff():
     assert [backoff(n) for n in range(9)] == [1,2,4,8,16,32,64,120,120]
+
+@pytest.mark.parametrize('value', ['www.tiktok.com/@Example/live', 'tiktok.com/@Example', 'm.tiktok.com/@Example/live?x=1'])
+def test_schemeless_creator_links(value):
+    assert normalize(value) == 'example'
+
+@pytest.mark.parametrize('value', [None, 123, {}, [], 'Fishy Name', 'www.tiktok.com.evil.com/@x'])
+def test_invalid_username_types(value):
+    with pytest.raises(ValueError): normalize(value)
+
+@pytest.mark.parametrize('value', ['.fishyplays', '@.fishyplays', 'https://www.tiktok.com/@.fishyplays/live'])
+def test_leading_dot_handle(value):
+    assert normalize(value) == '.fishyplays'

@@ -5,7 +5,13 @@ from dataclasses import dataclass, asdict
 from urllib.parse import urlsplit
 
 def normalize(value):
+    if not isinstance(value, str):
+        raise ValueError("Enter a TikTok @username or creator LIVE URL")
     value = value.strip()
+    if not value:
+        raise ValueError("Enter a TikTok @username before connecting")
+    if value.lower().startswith(("tiktok.com/", "www.tiktok.com/", "m.tiktok.com/")):
+        value = "https://" + value
     if '://' in value:
         url = urlsplit(value)
         if url.scheme != 'https' or url.hostname not in ('tiktok.com', 'www.tiktok.com', 'm.tiktok.com') or url.port or url.username:
@@ -15,8 +21,8 @@ def normalize(value):
             raise ValueError('Use a creator profile or LIVE URL; shortened links are unsupported')
         value = match[1]
     value = value.removeprefix('@')
-    if not re.fullmatch(r'[A-Za-z0-9_][A-Za-z0-9_.]{0,23}', value):
-        raise ValueError('Invalid TikTok username')
+    if not re.fullmatch(r'[A-Za-z0-9_.]{1,24}', value):
+        raise ValueError('Use the TikTok @username, not the display name (letters, numbers, dots and underscores only)')
     return value.lower()
 
 def count(value):

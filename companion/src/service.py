@@ -1,6 +1,7 @@
 import asyncio
 import contextlib
 import logging
+import json
 from aiohttp import web
 from TikTokLive import TikTokLiveClient
 from TikTokLive.events import ConnectEvent, RoomUserSeqEvent, LiveEndEvent, GiftEvent
@@ -104,12 +105,15 @@ class Service:
         async def control(request):
             try:
                 data = await request.json()
-                action = data['action']
+                if not isinstance(data, dict):
+                    raise ValueError('Expected a connection settings object')
+                action = data.get('action')
                 if action not in ('connect', 'disconnect'):
                     raise ValueError('Unknown action')
-                username = normalize(data['username']) if action == 'connect' else ''
-            except (ValueError, KeyError, TypeError):
-                raise web.HTTPBadRequest(text='Invalid action or username')
+                username = normalize(data.get('username')) if action == 'connect' else ''
+            except ValueError as exc:
+                message = str(exc) if not isinstance(exc, json.JSONDecodeError) else 'Invalid connection JSON'
+                return web.json_response({'error': message}, status=400)
             await self.stop()
             self.gifts = Gifts()
             self.costumes = Gifts("costume")
