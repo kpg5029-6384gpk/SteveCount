@@ -59,3 +59,10 @@ sounddevice 0.5.3: https://github.com/spatialaudio/python-sounddevice (MIT); Por
 Automated tests cover parsing, cooldown, disabled/expired/malformed feeds and command allowlist.
 Synthesized speech is tested separately from a real microphone. Fiishy's actual microphone,
 accent and live-stream background noise require real user testing.
+
+## Easier requests and short emotes
+You can say "little buddy can you dance please", "could you wave little buddy", or the existing short commands. You can also say "little buddy", pause, then give one command within three seconds, such as "dance". Without a recent wake phrase, bare commands do nothing. The wake window is consumed by the next nonempty recognized utterance and clears when voice is muted or restarted.
+
+Voice-triggered Dance, Wave, Cheer and Feeling emotes now finish within five seconds, including looping Player Emotes animations. Short one-shots finish sooner. Head riding remains active until Hop off; manual menu emotes keep their existing behavior.
+
+If recognition still misses requests, confirm the companion is listening to the intended physical microphone and that its input level is clear. This update adds supported natural phrases and pause handling; it cannot guarantee recognition for every microphone or background-noise condition. Synthesized audio checks pass, but Fiishy's microphone has not been tested here.

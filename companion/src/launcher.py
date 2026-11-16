@@ -102,10 +102,10 @@ if __name__ == '__main__':
             import wave
             import sounddevice
             from vosk import Model, KaldiRecognizer, SetLogLevel
-            from voice import model_path, PHRASES, parse_command
+            from voice import model_path, GRAMMAR, parse_command
             SetLogLevel(-1)
             with wave.open(sys.argv[2]) as audio:
-                rec=KaldiRecognizer(Model(str(model_path())),audio.getframerate(),json.dumps([*PHRASES,'[unk]']))
+                rec=KaldiRecognizer(Model(str(model_path())),audio.getframerate(),json.dumps(GRAMMAR))
                 rec.AcceptWaveform(audio.readframes(audio.getnframes()))
                 text=json.loads(rec.FinalResult()).get('text','')
             command=parse_command(text)

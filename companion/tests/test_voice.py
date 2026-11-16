@@ -63,3 +63,37 @@ def test_feeling_phrase_and_action():
     v=Voice(lambda:100.)
     assert v.recognized("How you feeling little buddy?")
     assert v.snapshot()['events'][-1]['command']=="Feeling"
+
+@pytest.mark.parametrize('text,command', [
+    ('Little buddy, can you dance please?', 'Dance'),
+    ('Could you wave little buddy please?', 'Wave'),
+    ('Little buddy please hop on my head', 'head_on'),
+])
+def test_natural_requests(text, command):
+    assert parse_command(text) == command
+
+def test_pause_after_wake_phrase():
+    now = [100.]
+    voice = Voice(lambda: now[0])
+    assert not voice.recognized('dance')
+    assert not voice.recognized('little buddy')
+    now[0] += 1
+    assert not voice.recognized('')
+    now[0] += 1
+    assert voice.recognized('can you dance please')
+    now[0] += 2
+    assert not voice.recognized('wave')
+    assert not voice.recognized('little buddy')
+    now[0] += 4
+    assert not voice.recognized('wave')
+    assert not voice.recognized('little buddy')
+    assert not voice.recognized('do not dance')
+    assert not voice.recognized('dance')
+    assert not voice.recognized('little buddy')
+    voice.stop()
+    assert not voice.recognized('dance')
+
+@pytest.mark.parametrize('text', ['little buddy do not dance', 'little buddy can you dance and wave',
+    'please do not dance little buddy', 'can you punch little buddy', 'little buddy please kill me'])
+def test_polite_requests_still_require_safe_unambiguous_actions(text):
+    assert parse_command(text) is None

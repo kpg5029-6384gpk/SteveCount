@@ -17,14 +17,26 @@ ALIASES = {
     'dance': 'Dance', 'wave': 'Wave', 'cheer': 'Cheer',
     'stop': 'stop', 'stop dancing': 'stop', 'come here': 'recall', 'recall': 'recall',
 }
-PHRASES = {phrase: command for words, command in ALIASES.items()
-           for phrase in (f'little buddy {words}', f'{words} little buddy')}
+# Only explicit phrases are accepted; no substring or fuzzy command matching.
+WAKE = 'little buddy'
+REQUESTS = {phrase: command for words, command in ALIASES.items()
+            for prefix in ('', 'please ', 'can you ', 'could you ', 'will you ')
+            for suffix in ('', ' please')
+            for phrase in (prefix + words + suffix,)}
+PHRASES = {phrase: command for words, command in REQUESTS.items()
+           for phrase in (f'{WAKE} {words}', f'{words} {WAKE}', f'{words} {WAKE} please')}
+GRAMMAR = sorted({*PHRASES, *REQUESTS, WAKE, '[unk]'})
+
+
+def clean_text(text):
+    if not isinstance(text, str) or len(text) > 256:
+        return ''
+    return ' '.join(re.sub(r'[^a-z ]', ' ', text.lower()).split())
+
 
 def parse_command(text):
-    if not isinstance(text, str) or len(text) > 256:
-        return None
-    words = re.sub(r'[^a-z ]', ' ', text.lower())
-    return PHRASES.get(' '.join(words.split()))
+    return PHRASES.get(clean_text(text))
+
 
 def model_path():
     root = Path(getattr(sys, '_MEIPASS', Path(__file__).resolve().parents[1]))
@@ -39,6 +51,7 @@ class Voice:
         self.events = deque(maxlen=16)
         self.status = 'Off'
         self.last_command = ''
+        self.wake_until = float('-inf')
         self.last = float('-inf')
         self.stop_event = threading.Event()
         self.thread = None
@@ -49,10 +62,22 @@ class Voice:
                         status=self.status, lastCommand=self.last_command)
 
     def recognized(self, text):
-        command = parse_command(text)
+        words = clean_text(text)
+        if not words:
+            return False
         with self.lock:
             now = self.clock()
-            if not command or self.stop_event.is_set() or now-self.last < 1.5:
+            if self.stop_event.is_set():
+                return False
+            if words == WAKE:
+                self.wake_until = now + 3
+                return False
+            command = PHRASES.get(words)
+            if command is None and now <= self.wake_until:
+                command = REQUESTS.get(words)
+            # One utterance after the wake phrase, including unrecognized speech.
+            self.wake_until = float('-inf')
+            if not command or now-self.last < 1.5:
                 return False
             self.last = now
             self.sequence += 1
@@ -68,6 +93,7 @@ class Voice:
             self.session = uuid.uuid4().hex
             self.sequence = 0
             self.events.clear()
+            self.wake_until = float('-inf')
             self.last = float('-inf')
             self.status = 'Starting microphone…'
         self.thread = threading.Thread(target=self._listen, args=(device,), daemon=True, name='SteveCount voice')
@@ -77,6 +103,7 @@ class Voice:
         self.stop_event.set()
         with self.lock:
             self.events.clear()
+            self.wake_until = float('-inf')
             self.status = 'Off'
 
     def _listen(self, device):
@@ -91,7 +118,7 @@ class Voice:
             if self.stop_event.is_set():
                 return
             rate = int(sd.query_devices(device, 'input')['default_samplerate'])
-            recognizer = KaldiRecognizer(model, rate, json.dumps([*PHRASES, '[unk]']))
+            recognizer = KaldiRecognizer(model, rate, json.dumps(GRAMMAR))
             chunks = queue.Queue(maxsize=16)
             def callback(data, frames, timestamp, status):
                 if status:
@@ -102,7 +129,7 @@ class Voice:
                 except queue.Full: pass
             if self.stop_event.is_set():
                 return
-            with sd.RawInputStream(samplerate=rate, blocksize=max(800,rate//5), device=device,
+            with sd.RawInputStream(samplerate=rate, blocksize=max(800,rate//10), device=device,
                                    channels=1, dtype='int16', callback=callback):
                 with self.lock:
                     if not self.stop_event.is_set(): self.status = 'Listening for “little buddy”'
